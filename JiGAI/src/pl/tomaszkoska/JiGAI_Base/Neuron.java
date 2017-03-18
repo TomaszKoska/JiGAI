@@ -6,33 +6,40 @@ import pl.tomaszkoska.JiGAI_Exceptions.MyException;
 
 public class Neuron {
 
-	double[] weights;
+	private double[] weights;
+	private double bias;
 	ActivationFunctionBehaviour activationFunctionBehaviour;
 
 
 	public Neuron(int numberOfInputs){
 		this.weights = new double[numberOfInputs];
 		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+
 	}
 	public Neuron(double[] weights){
+		this.weights = new double[weights.length];
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
 		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+
 	}
 
 	public Neuron(int numberOfInputs,
 			ActivationFunctionBehaviour activationFunctionBehaviour){
 		this.weights = new double[numberOfInputs];
-		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+		this.activationFunctionBehaviour = activationFunctionBehaviour;
+
 	}
 
 	public Neuron(double[] weights,
-			ActivationFunctionBehaviour activationFunctionBehaviour){
+		ActivationFunctionBehaviour activationFunctionBehaviour){
+		this.weights = new double[weights.length];
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
-		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+		this.activationFunctionBehaviour = activationFunctionBehaviour;
+
 	}
 
 	public double summingFunction(double[] inputValues){
@@ -41,7 +48,7 @@ public class Neuron {
 		try {
 			if(inputValues.length != weights.length){
 				throw new MyException
-				("Number of input variables do not match "
+				("Number of input variables does not match "
 						+ "the number of weights for this neuron!");
 			}
 			for (int i = 0; i < weights.length; i++) {
@@ -51,30 +58,32 @@ public class Neuron {
 			e.printStackTrace();
 		}
 
-		return sum;
+		return sum+bias;
 	}
 
 	public void randomizeWeights(){
 		for (int i = 0; i < weights.length; i++) {
 			weights[i] = Math.random();
 		}
+		bias = Math.random();
 	}
 
 	public void randomizeWeights(double min, double max){
 		for (int i = 0; i < weights.length; i++) {
 			weights[i] = Math.random()*(max-min)+min;
 		}
+		bias = Math.random()*(max-min)+min;
 	}
 
 	public double processInput(double[] inputValues){
 			return activationFunctionBehaviour.compute((summingFunction(inputValues)));
 	}
 
-	public void updateWeights(double[] updatingInfo){
+	public void updateWeights(double biasInfo, double[] updatingInfo){
 		try {
 			if(updatingInfo.length != weights.length){
 				throw new MyException
-				("Number of updating information values do not match "
+				("Number of updating information values does not match "
 						+ "the number of weights for this neuron!");
 			}
 		}catch(Exception e){
@@ -83,11 +92,14 @@ public class Neuron {
 		for (int i = 0; i < weights.length; i++) {
 			weights[i] = weights[i] + updatingInfo[i];
 		}
+			bias += biasInfo;
 
 	}
 
 	public String toString(){
 		String output ="";
+
+		output	+= bias + " | ";
 		for (int i = 0; i < weights.length; i++) {
 			output += weights[i];
 			if (i!=weights.length-1) {
@@ -108,6 +120,12 @@ public class Neuron {
 	}
 	public void setActivationFunctionBehaviour(ActivationFunctionBehaviour activationFunctionBehaviour) {
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
+	}
+	public double getBias() {
+		return bias;
+	}
+	public void setBias(double bias) {
+		this.bias = bias;
 	}
 
 

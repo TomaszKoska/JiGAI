@@ -15,10 +15,11 @@ public class BinarySigmoidActivationFunction extends ActivationFunctionBehaviour
 
 	@Override
 	public double compute(double value) {
-		if( 1/(1+Math.exp((-value)*parameter)) >= treshold){
-			return 0;
-		}else{
+		//System.out.println("ekhm: " + 1/(1+Math.exp((-value)*parameter))  + "  t: " + treshold );
+		if( (1/(1+Math.exp((-value)*parameter))) >= treshold){
 			return 1;
+		}else{
+			return 0;
 		}
 	}
 
