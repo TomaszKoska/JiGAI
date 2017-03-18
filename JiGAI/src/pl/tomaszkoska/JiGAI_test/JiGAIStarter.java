@@ -1,4 +1,4 @@
-package pl.tomaszkoska.JiGAI_Base;
+package pl.tomaszkoska.JiGAI_test;
 
 public class JiGAIStarter {
 
