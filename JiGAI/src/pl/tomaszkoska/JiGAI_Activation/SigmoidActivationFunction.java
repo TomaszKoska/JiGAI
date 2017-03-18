@@ -7,12 +7,20 @@ public class SigmoidActivationFunction extends ActivationFunctionBehaviour {
 	public SigmoidActivationFunction(double parameter) {
 		super();
 		this.parameter = parameter;
+		this.name = "Sigmoid";
 	}
 
 	@Override
 	public double compute(double value) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1/(1+Math.exp((-value)*parameter));
+	}
+
+	public double getParameter() {
+		return parameter;
+	}
+
+	public void setParameter(double parameter) {
+		this.parameter = parameter;
 	}
 
 
