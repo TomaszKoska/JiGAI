@@ -7,8 +7,9 @@ public class NeuralNet {
 
 	private NeuralNetLayer[] layers;
 	private int inputVariableCount;
-	private double[][] lastForecast;
-	private double[][] lastError;
+
+	private double[][] prediction; //last calculated prediction
+	private double[][] error; // last calculated error
 
 
 	public NeuralNet(int[] neuronCounts, int numberOfInputVariables) {
@@ -69,7 +70,7 @@ public class NeuralNet {
 				outcome[i] = processInput(dataRow);
 			}
 		}
-		lastForecast = outcome;
+		prediction = outcome;
 		return outcome;
 	}
 
@@ -80,18 +81,18 @@ public class NeuralNet {
 		predict(inputDataSet);
 		calculatePredictionError(targetDataSet);
 
-		return lastForecast;
+		return prediction;
 	}
 
 	public double[][] calculatePredictionError(double[][] targetDataSet){
-		double[][] outcome = new double[lastForecast.length][this.getOutputNeuronsCount()];
+		double[][] outcome = new double[prediction.length][this.getOutputNeuronsCount()];
 
 		for (int i = 0; i < outcome.length; i++) {
 			for (int j = 0; j < outcome[0].length; j++) {
-				outcome[i][j] = targetDataSet[i][j]-lastForecast[i][j];
+				outcome[i][j] = targetDataSet[i][j]-prediction[i][j];
 			}
 		}
-		lastError = outcome;
+		error = outcome;
 		return outcome;
 	}
 
@@ -141,34 +142,34 @@ public class NeuralNet {
 	}
 
 
-	public double[][] getLastForecast() {
-		return lastForecast;
+	public double[][] getPrediction() {
+		return prediction;
 	}
 
 
 
 
-	public double[][] getLastError() {
-		return lastError;
+	public double[][] getError() {
+		return error;
 	}
 
-	public double[][] getLastSquaredError() {
-		double[][] outcome = new double[lastError.length][lastError[0].length];
-		for (int i = 0; i < lastError.length; i++) {
-			for (int j = 0; j < lastError[0].length; j++) {
-				outcome[i][j] = lastError[i][j]*lastError[i][j];
+	public double[][] getSquaredError() {
+		double[][] outcome = new double[error.length][error[0].length];
+		for (int i = 0; i < error.length; i++) {
+			for (int j = 0; j < error[0].length; j++) {
+				outcome[i][j] = error[i][j]*error[i][j];
 			}
 		}
 		return outcome;
 	}
 
 	public double[] getRMSE(){
-		double[] outcome = new double[lastError[0].length];
-		double[][] sqe = getLastSquaredError();
+		double[] outcome = new double[error[0].length];
+		double[][] sqe = getSquaredError();
 
 		for (int j = 0; j < outcome.length; j++) {
 			outcome[j] = 0;
-			for (int i = 0; i < lastError.length; i++) {
+			for (int i = 0; i < error.length; i++) {
 					outcome[j] += sqe[i][j];
 			}
 			outcome[j] = Math.sqrt(outcome[j]/sqe.length);
