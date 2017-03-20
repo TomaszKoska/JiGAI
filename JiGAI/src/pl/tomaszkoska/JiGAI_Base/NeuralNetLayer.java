@@ -1,12 +1,12 @@
 package pl.tomaszkoska.JiGAI_Base;
 
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
-import pl.tomaszkoska.JiGAI_Activation.NeutralActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 
 public class NeuralNetLayer {
-	NeuralNetLayer previousLayer;
-	Neuron[] neurons;
+	private NeuralNetLayer previousLayer;
+	private Neuron[] neurons;
 
 
 	public NeuralNetLayer(int neuronCount, int weightCount){
@@ -55,7 +55,7 @@ public class NeuralNetLayer {
 			}
 		} else{
 			for (int i = 0; i < neurons.length; i++) {
-			neurons[i].setActivationFunctionBehaviour(new NeutralActivationFunction());
+			neurons[i].setActivationFunctionBehaviour(new LinearActivationFunction());
 			}
 		}
 	}
@@ -71,7 +71,6 @@ public class NeuralNetLayer {
 
 		return outcome;
 	}
-
 
 	public int getNeuronsCount(){
 		return neurons.length;

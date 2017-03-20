@@ -2,6 +2,7 @@ package pl.tomaszkoska.JiGAI_Base;
 
 import pl.tomaszkoska.JiGAI_Activation.ActivationFunctionBehaviour;
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Exceptions.MyException;
 
 public class Neuron {
@@ -13,7 +14,7 @@ public class Neuron {
 
 	public Neuron(int numberOfInputs){
 		this.weights = new double[numberOfInputs];
-		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 
 	}
 	public Neuron(double[] weights){
@@ -21,7 +22,7 @@ public class Neuron {
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
-		this.activationFunctionBehaviour = new BinarySigmoidActivationFunction(1, 0.5);
+		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 
 	}
 

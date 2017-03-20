@@ -1,8 +1,8 @@
 package pl.tomaszkoska.JiGAI_Activation;
 
-public class NeutralActivationFunction extends ActivationFunctionBehaviour{
+public class LinearActivationFunction extends ActivationFunctionBehaviour{
 
-	public NeutralActivationFunction(){
+	public LinearActivationFunction(){
 		name = "Neutral";
 	}
 

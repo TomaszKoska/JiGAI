@@ -4,6 +4,12 @@ public class SigmoidActivationFunction extends ActivationFunctionBehaviour {
 	double parameter;
 
 
+	public SigmoidActivationFunction() {
+		super();
+		this.parameter = 1;
+		this.name = "Sigmoid";
+	}
+
 	public SigmoidActivationFunction(double parameter) {
 		super();
 		this.parameter = parameter;
