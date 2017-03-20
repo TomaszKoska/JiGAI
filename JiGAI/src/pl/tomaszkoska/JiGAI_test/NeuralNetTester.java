@@ -53,6 +53,7 @@ public class NeuralNetTester {
 			}
 			System.out.println(line);
 		}
+		System.out.println("");
 		double[][] sqe = nn.getLastSquaredError();
 		for (int i = 0; i < sqe.length; i++) {
 			String line = "";
@@ -61,7 +62,10 @@ public class NeuralNetTester {
 			}
 			System.out.println(line);
 		}
-
+		double[] rmse = nn.getRMSE();
+		for (int i = 0; i < rmse.length; i++) {
+			System.out.println("RMSE:" + rmse[i]);
+		}
 
 	}
 

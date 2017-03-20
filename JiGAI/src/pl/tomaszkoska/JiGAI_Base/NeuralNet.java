@@ -162,6 +162,20 @@ public class NeuralNet {
 		return outcome;
 	}
 
+	public double[] getRMSE(){
+		double[] outcome = new double[lastError[0].length];
+		double[][] sqe = getLastSquaredError();
+
+		for (int j = 0; j < outcome.length; j++) {
+			outcome[j] = 0;
+			for (int i = 0; i < lastError.length; i++) {
+					outcome[j] += sqe[i][j];
+			}
+			outcome[j] = Math.sqrt(outcome[j]/sqe.length);
+		}
+		return outcome;
+	}
+
 
 
 }
