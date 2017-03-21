@@ -1,9 +1,10 @@
 package pl.tomaszkoska.JiGAI_Base;
 
-
+import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
 
 public class NeuralNet {
 
+	private LearningMethod learningMethod;
 
 	private NeuralNetLayer[] layers;
 	private int inputVariableCount;
@@ -52,6 +53,11 @@ public class NeuralNet {
 		}
 		return input;
 	}
+
+	public void train(){
+		//TODO: some day please implement the learning algorithm
+	}
+
 
 	public double[][] predict(double[][] inputDataSet){
 
@@ -175,6 +181,16 @@ public class NeuralNet {
 			outcome[j] = Math.sqrt(outcome[j]/sqe.length);
 		}
 		return outcome;
+	}
+
+
+	public LearningMethod getLearningMethod() {
+		return learningMethod;
+	}
+
+
+	public void setLearningMethod(LearningMethod learningMethod) {
+		this.learningMethod = learningMethod;
 	}
 
 
