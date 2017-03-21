@@ -6,7 +6,8 @@ public class JiGAIStarter {
 	public static void main(String[] args) {
 		//NeuronTester.runTest();
 		//NeuralNetLayerTester.runTest();
-		NeuralNetTester.runTest();
+		//NeuralNetTester.runTest();
+		GeneticNeuralNetTester.runTest();
 	}
 
 }

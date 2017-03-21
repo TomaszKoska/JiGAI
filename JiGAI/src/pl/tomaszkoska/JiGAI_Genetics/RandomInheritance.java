@@ -1,4 +1,4 @@
-package pl.tomaszkoska.JiGAI_genetics;
+package pl.tomaszkoska.JiGAI_Genetics;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 
 public class RandomInheritance implements InheritanceBehaviour{
