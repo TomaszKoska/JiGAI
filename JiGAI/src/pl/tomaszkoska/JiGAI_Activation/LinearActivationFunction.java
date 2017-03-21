@@ -3,7 +3,8 @@ package pl.tomaszkoska.JiGAI_Activation;
 public class LinearActivationFunction extends ActivationFunctionBehaviour{
 
 	public LinearActivationFunction(){
-		name = "Neutral";
+		name = "Linear";
+		this.shortName = "l";
 	}
 
 	@Override

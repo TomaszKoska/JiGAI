@@ -11,6 +11,7 @@ public class BinarySigmoidActivationFunction extends ActivationFunctionBehaviour
 		this.parameter = parameter;
 		this.treshold = treshold;
 		this.name = "Binary Sigmoid";
+		this.shortName = "bs";
 	}
 
 	@Override

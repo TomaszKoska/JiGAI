@@ -31,18 +31,76 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		//m+1...p - code number of activation function
 		//p+1...q - weights of each neuron one by one (input layer first)
 
-		this.genome = new double[20];
+		int pointer = layers.length+1;
+
+
+		for (int i = 0; i < layers.length; i++) {
+			pointer+= 2*layers[i].getNeurons().length;
+		}
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				for (int k = 0; k < layers[i].getNeurons()[j].getWeights().length; k++) {
+					pointer++;
+				}
+			}
+		}
+
+
+		this.genome = new double[pointer];
 
 		//1+layerCount+layerCount*neuronCount(czyli bias)+layerCount*neuronCount(czyli funkcje aktywacji) + layerCount*neuronCount*weghtsCount
 		this.genome[0] = this.layers.length;
+
+
+		pointer = 1;
 		for (int i = 0; i < layers.length; i++) {
-			this.genome[i+1] = layers[i].getNeuronCount();
+			this.genome[pointer] = layers[i].getNeuronCount();
+			pointer++;
+		}
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				this.genome[pointer] = layers[i].getNeurons()[j].getBias();
+				pointer++;
+			}
 		}
 
 
 		for (int i = 0; i < layers.length; i++) {
-			this.genome[i+1] = layers[i].getNeuronCount();
+
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+
+				switch(layers[i].getNeurons()[j].getActivationFunctionBehaviour().getShortName()){
+				case "s":
+					this.genome[pointer] = 1;
+				break;
+				case "bs":
+					this.genome[pointer] = 2;
+				break;
+				case "l":
+					this.genome[pointer] = 3;
+				break;
+				case "ht":
+					this.genome[pointer] = 4;
+				break;
+				default:
+					this.genome[pointer] = -1;	// this will mean linear in future probably
+				break;
+				}
+				pointer++;
+			}
 		}
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				for (int k = 0; k < layers[i].getNeurons()[j].getWeights().length; k++) {
+					this.genome[pointer] = layers[i].getNeurons()[j].getWeights()[k];
+					pointer++;
+				}
+			}
+		}
+
 
 		//genome is: 1: number of layers,
 		//n - number of neurons on each layer

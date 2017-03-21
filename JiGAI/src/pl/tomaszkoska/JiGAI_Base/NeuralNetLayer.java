@@ -1,6 +1,7 @@
 package pl.tomaszkoska.JiGAI_Base;
 
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 
@@ -52,6 +53,10 @@ public class NeuralNetLayer {
 		} else if(activationFunctionName.toLowerCase() == "s"){
 			for (int i = 0; i < neurons.length; i++) {
 			neurons[i].setActivationFunctionBehaviour(new SigmoidActivationFunction(1));
+			}
+		} else if(activationFunctionName.toLowerCase() == "ht"){
+				for (int i = 0; i < neurons.length; i++) {
+				neurons[i].setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
 			}
 		} else{
 			for (int i = 0; i < neurons.length; i++) {

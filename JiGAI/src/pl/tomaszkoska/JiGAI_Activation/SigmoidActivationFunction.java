@@ -8,12 +8,14 @@ public class SigmoidActivationFunction extends ActivationFunctionBehaviour {
 		super();
 		this.parameter = 1;
 		this.name = "Sigmoid";
+		this.shortName = "s";
 	}
 
 	public SigmoidActivationFunction(double parameter) {
 		super();
 		this.parameter = parameter;
 		this.name = "Sigmoid";
+		this.shortName = "s";
 	}
 
 	@Override
