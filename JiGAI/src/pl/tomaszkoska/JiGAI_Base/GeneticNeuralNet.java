@@ -1,5 +1,9 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Genetics.InheritanceBehaviour;
 import pl.tomaszkoska.JiGAI_Genetics.MutationBehaviour;
 import pl.tomaszkoska.JiGAI_Genetics.RandomInheritance;
@@ -18,20 +22,91 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		codeGenome();
 		setAllGeneticBehaviour();
 	}
+	public GeneticNeuralNet(double[] genome) {
+		super();
+		this.genome = genome;
+		decodeGenome();
+		setAllGeneticBehaviour();
+	}
 
 	public void setAllGeneticBehaviour(){
 		mutationBehaviour = new RandomMutation(this, -1, 1);
 		inheritanceBehaviour = new RandomInheritance(this);
 	}
 
+	public void decodeGenome(){
+		//genome[0] <- how many next number we need to read to know the sizes of layers
+		//genome[1...n] <- how many biases are there
+		//genome[n+1...m] <- what are activation functions
+		//genome[m+1...p] <- weights
+
+		int layerCount = (int)(genome[0]);
+		int[] neuronCounts = new int[layerCount];
+
+		int pointer = 2;
+		for (int i = 0; i < neuronCounts.length; i++) {
+			neuronCounts[i] = (int)(genome[pointer]);
+			pointer++;
+		}
+
+		this.layers = new NeuralNetLayer[neuronCounts.length];
+		this.layers[0] = new NeuralNetLayer(neuronCounts[0],(int)(genome[1]));
+
+		for (int i = 0; i < layers.length; i++) {
+			this.layers[i] = new NeuralNetLayer(neuronCounts[i],layers[0]);
+		}
+		this.inputVariableCount = (int)(genome[1]);
+
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				layers[i].getNeurons()[j].setBias(genome[pointer]);
+				pointer++;
+			}
+		}
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				switch((int)(this.genome[pointer])){
+				case 1:
+					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new SigmoidActivationFunction());
+				break;
+				case 2:
+					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new BinarySigmoidActivationFunction(0.5,1));
+				break;
+				case 3:
+					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new LinearActivationFunction());
+				break;
+				case 4:
+					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
+				break;
+				default:
+					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new LinearActivationFunction());
+				break;
+				}
+				pointer++;
+			}
+		}
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				for (int k = 0; k< layers[i].getNeurons()[j].getWeights().length; k++) {
+					layers[i].getNeurons()[j].getWeights()[k] = genome[pointer];
+					pointer++;
+				}
+			}
+		}
+
+	}
+
+
 	public void codeGenome(){
-		//1 - number of layers
-		//2...n - neuron counts
+		//0 - number of layers
+		//1...n - neuron counts
 		//n+1...m - biases for each neuron
 		//m+1...p - code number of activation function
 		//p+1...q - weights of each neuron one by one (input layer first)
 
-		int pointer = layers.length+1;
+		int pointer = layers.length+2; // plus 2 because 1. number of layers, and 2. number od input variables
 
 
 		for (int i = 0; i < layers.length; i++) {
@@ -51,9 +126,9 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 
 		//1+layerCount+layerCount*neuronCount(czyli bias)+layerCount*neuronCount(czyli funkcje aktywacji) + layerCount*neuronCount*weghtsCount
 		this.genome[0] = this.layers.length;
+		this.genome[1] = this.inputVariableCount;
 
-
-		pointer = 1;
+		pointer = 2;
 		for (int i = 0; i < layers.length; i++) {
 			this.genome[pointer] = layers[i].getNeuronCount();
 			pointer++;
@@ -107,11 +182,6 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		//sequence: baias,weights,acivationFunctionNumber top->down
 	}
 
-	public void decodeGenome(){
-		//TODO: this function should turn genome into a neural net
-
-		//ZASTAP TO KONSTRUKTIREM!!
-	}
 
 
 

@@ -13,6 +13,10 @@ public class NeuralNet {
 	protected double[][] error; // last calculated error
 
 
+	public NeuralNet(){
+
+	}
+
 	public NeuralNet(int[] neuronCounts, int numberOfInputVariables) {
 		// we give something like 5,5,5 which is 1 input layer, 1 hidden layer and 1 output layer
 		// or 6,6,6,2 - 1 input, 2 hidden and 1 output
