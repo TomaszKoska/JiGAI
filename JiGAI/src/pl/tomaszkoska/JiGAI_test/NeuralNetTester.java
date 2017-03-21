@@ -39,22 +39,22 @@ public class NeuralNetTester {
 
 
 		System.out.println(nn.weightsToString());
-		for (int i = 0; i < nn.getLastForecast().length; i++) {
+		for (int i = 0; i < nn.getPrediction().length; i++) {
 			String line = "";
-			for (int j = 0; j < nn.getLastForecast()[0].length; j++) {
-				line += "," + nn.getLastForecast()[i][j];
+			for (int j = 0; j < nn.getPrediction()[0].length; j++) {
+				line += "," + nn.getPrediction()[i][j];
 			}
 			System.out.println(line);
 		}
-		for (int i = 0; i < nn.getLastError().length; i++) {
+		for (int i = 0; i < nn.getError().length; i++) {
 			String line = "";
-			for (int j = 0; j < nn.getLastError()[0].length; j++) {
-				line += "," + nn.getLastError()[i][j];
+			for (int j = 0; j < nn.getError()[0].length; j++) {
+				line += "," + nn.getError()[i][j];
 			}
 			System.out.println(line);
 		}
 		System.out.println("");
-		double[][] sqe = nn.getLastSquaredError();
+		double[][] sqe = nn.getSquaredError();
 		for (int i = 0; i < sqe.length; i++) {
 			String line = "";
 			for (int j = 0; j < sqe[0].length; j++) {

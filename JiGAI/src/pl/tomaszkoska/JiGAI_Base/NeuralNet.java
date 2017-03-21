@@ -4,13 +4,13 @@ import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
 
 public class NeuralNet {
 
-	private LearningMethod learningMethod;
+	protected LearningMethod learningMethod;
 
-	private NeuralNetLayer[] layers;
-	private int inputVariableCount;
+	protected NeuralNetLayer[] layers;
+	protected int inputVariableCount;
 
-	private double[][] prediction; //last calculated prediction
-	private double[][] error; // last calculated error
+	protected double[][] prediction; //last calculated prediction
+	protected double[][] error; // last calculated error
 
 
 	public NeuralNet(int[] neuronCounts, int numberOfInputVariables) {
