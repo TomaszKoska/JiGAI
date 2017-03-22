@@ -217,9 +217,20 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		for (int i = mutationStart; i < genome.length; i++) {
 			genome[i] = Math.random();
 		}
-		System.out.println("made random");
+
 	}
 
+
+	public void intherit(GeneticNeuralNet mom, GeneticNeuralNet dad) {
+		for (int i = 0; i < genome.length; i++) {
+
+			if(Math.random() < 0.5){
+			this.genome[i] = mom.getGenome()[i];
+			}else{
+			this.genome[i] = dad.getGenome()[i];
+			}
+		}
+	}
 
 
 
@@ -264,7 +275,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		int thisFittness = (int)(this.getFitness()*100000000);
 		int otherFittness = (int)(o.getFitness()*100000000);
 
-		return thisFittness-otherFittness;
+		return otherFittness-thisFittness;
 	}
 
 	public String getGenomeString(){
@@ -323,6 +334,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	public void increaseAge() {
 		this.age++;
 	}
+
 
 
 

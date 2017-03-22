@@ -3,8 +3,8 @@ package pl.tomaszkoska.JiGAI_Base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-
 import pl.tomaszkoska.JiGAI_Genetics.KillingBehaviour;
+import pl.tomaszkoska.JiGAI_Genetics.ReproductionBehaviour;
 
 
 public class GeneticEngine {
@@ -12,6 +12,7 @@ public class GeneticEngine {
 	protected ArrayList<GeneticNeuralNet> population;
 
 	protected KillingBehaviour killingBehaviour;
+	ReproductionBehaviour reproductionBehaviour;
 
 	protected double MUTATION_RATE;
 	protected int START_POPULATION_SIZE;
@@ -28,6 +29,7 @@ public class GeneticEngine {
 		INPUT_COUNT = iNPUT_COUNT;
 		NEURON_COUNTS = nEURON_COUNTS;
 		killingBehaviour = new KillingBehaviour(this);
+		reproductionBehaviour = new ReproductionBehaviour(this);
 	}
 
 	public void initialize() {
@@ -44,12 +46,10 @@ public class GeneticEngine {
 		updateAge();
 		doTasks(inputDataSet,targetDataSet);
 		calculateFitness();
-
 		sort();
-		System.out.println("alive: " + population.size());
 		kill();
-		System.out.println("alive: " + population.size());
 		reproduce();
+
 	}
 
 
@@ -62,7 +62,8 @@ public class GeneticEngine {
 	}
 
 	private void reproduce() {
-		// TODO Auto-generated method stub
+		reproductionBehaviour.reproduce();
+
 	}
 
 	private void calculateFitness() {
@@ -131,8 +132,9 @@ public class GeneticEngine {
 		for (int i = 0; i < Math.min(5,population.size()); i++) {
 			System.out.println(i + ". " + population.get(i).getFitness());
 		}
-
 	}
-
+	public double getBestFitness(){
+		return population.get(0).getFitness();
+	}
 
 }

@@ -17,7 +17,7 @@ public class KillingBehaviour {
 
 		Iterator<GeneticNeuralNet> i = geneticEngine.getPopulation().iterator();
 
-		int j = (int)(geneticEngine.getPopulation().size()/2);
+		int j = (int)(geneticEngine.getPopulation().size()*7/8);
 		int last = geneticEngine.getPopulation().size();
 		while (i.hasNext() && j < last) {
 			GeneticNeuralNet tmp = i.next();
