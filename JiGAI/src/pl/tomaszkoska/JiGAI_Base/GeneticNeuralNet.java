@@ -50,7 +50,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 
 		int layerCount = (int)(genome[0]);
 		int[] neuronCounts = new int[layerCount];
-
+		this.inputVariableCount = (int)(genome[1]);
 		int pointer = 2;
 
 		for (int i = 0; i < neuronCounts.length; i++) {
@@ -236,7 +236,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 			fit += rmses[i];
 		}
 		fit = fit/rmses.length;
-
+		//System.out.println(fit);
 		this.fitness = fit;
 		return fit;
 	}
@@ -261,8 +261,8 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 
 	@Override
 	public int compareTo(GeneticNeuralNet o) {
-		int thisFittness = (int)(this.getFitness());
-		int otherFittness = (int)(o.getFitness());
+		int thisFittness = (int)(this.getFitness()*100000000);
+		int otherFittness = (int)(o.getFitness()*100000000);
 
 		return thisFittness-otherFittness;
 	}

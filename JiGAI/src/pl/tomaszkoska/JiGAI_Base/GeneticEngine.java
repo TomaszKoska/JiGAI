@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import pl.tomaszkoska.JiGAI_Genetics.KillingBehaviour;
+
 
 public class GeneticEngine {
 
 	protected ArrayList<GeneticNeuralNet> population;
+
+	protected KillingBehaviour killingBehaviour;
 
 	protected double MUTATION_RATE;
 	protected int START_POPULATION_SIZE;
@@ -23,6 +27,7 @@ public class GeneticEngine {
 		START_POPULATION_SIZE = sTART_POPULATION_SIZE;
 		INPUT_COUNT = iNPUT_COUNT;
 		NEURON_COUNTS = nEURON_COUNTS;
+		killingBehaviour = new KillingBehaviour(this);
 	}
 
 	public void initialize() {
@@ -35,14 +40,26 @@ public class GeneticEngine {
 		}
 	}
 
-	public void runNextTurn() {
+	public void runNextTurn(double[][] inputDataSet,double[][] targetDataSet) {
 		updateAge();
+		doTasks(inputDataSet,targetDataSet);
 		calculateFitness();
+
 		sort();
+		System.out.println("alive: " + population.size());
 		kill();
+		System.out.println("alive: " + population.size());
 		reproduce();
 	}
 
+
+	private void doTasks(double[][] inputDataSet,double[][] targetDataSet) {
+
+		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
+			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
+			gnn.fullPredict(inputDataSet, targetDataSet);
+		}
+	}
 
 	private void reproduce() {
 		// TODO Auto-generated method stub
@@ -60,12 +77,7 @@ public class GeneticEngine {
 	}
 
 	private void kill(){
-		Iterator<GeneticNeuralNet> i = population.iterator();
-
-		while (i.hasNext()) {
-			GeneticNeuralNet tmp = i.next();
-				i.remove();
-			}
+		killingBehaviour.kill();
 	}
 
 	private void updateAge() {
@@ -115,6 +127,12 @@ public class GeneticEngine {
 		NEURON_COUNTS = nEURON_COUNTS;
 	}
 
+	public void printTop(){
+		for (int i = 0; i < Math.min(5,population.size()); i++) {
+			System.out.println(i + ". " + population.get(i).getFitness());
+		}
+
+	}
 
 
 }
