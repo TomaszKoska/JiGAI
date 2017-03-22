@@ -28,7 +28,7 @@ public class NeuralNetLayer {
 		this.previousLayer = previousLayer;
 		this.neurons = new Neuron[neuronCount];
 		for (int i = 0; i < neurons.length; i++) {
-			neurons[i] = new Neuron(previousLayer.getNeuronsCount());
+			neurons[i] = new Neuron(previousLayer.getNeuronCount());
 		}
 	}
 
@@ -68,7 +68,7 @@ public class NeuralNetLayer {
 
 
 	public double[] processInput(double[] inputValues){
-		double[] outcome = new double[this.getNeuronsCount()];
+		double[] outcome = new double[this.getNeuronCount()];
 
 		for (int i = 0; i < outcome.length; i++) {
 				outcome[i] = neurons[i].processInput(inputValues);
@@ -77,9 +77,6 @@ public class NeuralNetLayer {
 		return outcome;
 	}
 
-	public int getNeuronsCount(){
-		return neurons.length;
-	}
 
 	public NeuralNetLayer getPreviousLayer() {
 		return previousLayer;

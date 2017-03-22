@@ -7,7 +7,8 @@ public class JiGAIStarter {
 		//NeuronTester.runTest();
 		//NeuralNetLayerTester.runTest();
 		//NeuralNetTester.runTest();
-		GeneticNeuralNetTester.runTest();
+//		GeneticNeuralNetTester.runTest();
+		GeneticEngineTester.runTest();
 	}
 
 }

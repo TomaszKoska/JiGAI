@@ -1,5 +1,7 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import java.util.Random;
+
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
@@ -16,6 +18,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	protected InheritanceBehaviour inheritanceBehaviour;
 	protected int age;	//how many epochs did this net survive?
 
+	public static int UNMUTABLE_PART_OF_GENOME =10;
 
 	public GeneticNeuralNet(int[] neuronCounts, int numberOfInputVariables) {
 		super(neuronCounts, numberOfInputVariables);
@@ -28,45 +31,46 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		decodeGenome();
 		setAllGeneticBehaviour();
 	}
+	public GeneticNeuralNet() {
+		super();
+	}
 
 	public void setAllGeneticBehaviour(){
+		UNMUTABLE_PART_OF_GENOME = 1+1+(int)(this.genome[0]);
 		mutationBehaviour = new RandomMutation(this, -1, 1);
 		inheritanceBehaviour = new RandomInheritance(this);
 	}
 
 	public void decodeGenome(){
-		//genome[0] <- how many next number we need to read to know the sizes of layers
-		//genome[1...n] <- how many biases are there
-		//genome[n+1...m] <- what are activation functions
-		//genome[m+1...p] <- weights
+		//0 - number of layers
+		//1...n - neuron counts
+		//m+1...n - code number of activation function
+		//n+1...p - biases for each neuron
+		//p+1...q - weights of each neuron one by one (input layer first)
 
 		int layerCount = (int)(genome[0]);
 		int[] neuronCounts = new int[layerCount];
 
 		int pointer = 2;
+
 		for (int i = 0; i < neuronCounts.length; i++) {
 			neuronCounts[i] = (int)(genome[pointer]);
 			pointer++;
 		}
 
+
 		this.layers = new NeuralNetLayer[neuronCounts.length];
 		this.layers[0] = new NeuralNetLayer(neuronCounts[0],(int)(genome[1]));
 
-		for (int i = 0; i < layers.length; i++) {
-			this.layers[i] = new NeuralNetLayer(neuronCounts[i],layers[0]);
+		for (int i = 1; i < layers.length; i++) {
+			this.layers[i] = new NeuralNetLayer(neuronCounts[i],layers[i-1]);
 		}
+
 		this.inputVariableCount = (int)(genome[1]);
 
-
 		for (int i = 0; i < layers.length; i++) {
 			for (int j = 0; j < layers[i].getNeurons().length; j++) {
-				layers[i].getNeurons()[j].setBias(genome[pointer]);
-				pointer++;
-			}
-		}
 
-		for (int i = 0; i < layers.length; i++) {
-			for (int j = 0; j < layers[i].getNeurons().length; j++) {
 				switch((int)(this.genome[pointer])){
 				case 1:
 					layers[i].getNeurons()[j].setActivationFunctionBehaviour(new SigmoidActivationFunction());
@@ -87,6 +91,17 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 				pointer++;
 			}
 		}
+
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+
+				layers[i].getNeurons()[j].setBias(genome[pointer]);
+				pointer++;
+			}
+		}
+
+
 		for (int i = 0; i < layers.length; i++) {
 			for (int j = 0; j < layers[i].getNeurons().length; j++) {
 				for (int k = 0; k< layers[i].getNeurons()[j].getWeights().length; k++) {
@@ -95,14 +110,15 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 				}
 			}
 		}
+
 	}
 
 
 	public void codeGenome(){
 		//0 - number of layers
 		//1...n - neuron counts
-		//n+1...m - biases for each neuron
-		//m+1...p - code number of activation function
+		//m+1...n - code number of activation function
+		//n+1...p - biases for each neuron
 		//p+1...q - weights of each neuron one by one (input layer first)
 
 		int pointer = layers.length+2; // plus 2 because 1. number of layers, and 2. number od input variables
@@ -128,16 +144,10 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		this.genome[1] = this.inputVariableCount;
 
 		pointer = 2;
+
 		for (int i = 0; i < layers.length; i++) {
 			this.genome[pointer] = layers[i].getNeuronCount();
 			pointer++;
-		}
-
-		for (int i = 0; i < layers.length; i++) {
-			for (int j = 0; j < layers[i].getNeurons().length; j++) {
-				this.genome[pointer] = layers[i].getNeurons()[j].getBias();
-				pointer++;
-			}
 		}
 
 
@@ -168,27 +178,51 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 
 		for (int i = 0; i < layers.length; i++) {
 			for (int j = 0; j < layers[i].getNeurons().length; j++) {
+				this.genome[pointer] = layers[i].getNeurons()[j].getBias();
+				pointer++;
+			}
+		}
+
+
+
+		for (int i = 0; i < layers.length; i++) {
+			for (int j = 0; j < layers[i].getNeurons().length; j++) {
 				for (int k = 0; k < layers[i].getNeurons()[j].getWeights().length; k++) {
 					this.genome[pointer] = layers[i].getNeurons()[j].getWeights()[k];
 					pointer++;
 				}
 			}
 		}
-
-
-		//genome is: 1: number of layers,
-		//n - number of neurons on each layer
-		//sequence: baias,weights,acivationFunctionNumber top->down
 	}
-
-
-
 
 	public void makeRandom() {
-		for (int i = 0; i < genome.length; i++) {
+		//0 - number of layers
+		//1...n - neuron counts
+		//m+1...n - code number of activation function
+		//n+1...p - biases for each neuron
+		//p+1...q - weights of each neuron one by one (input layer first)
+		int min=3;
+		int max=4;
+		int mutationStart = UNMUTABLE_PART_OF_GENOME;
+		Random random = new Random();
+		for (int i = mutationStart; i < mutationStart+layers.length; i++) {
+			genome[i] = random.nextInt(max + 1 - min) + min;;
+		}
+
+
+		for (int i = 0; i < layers.length; i++) {
+			mutationStart += layers[i].getNeuronCount();
+		}
+
+		for (int i = mutationStart; i < genome.length; i++) {
 			genome[i] = Math.random();
 		}
+		System.out.println("made random");
 	}
+
+
+
+
 
 	public void introduceMutation(double mutationRate){
 		mutationBehaviour.mutate(mutationRate);
