@@ -95,7 +95,6 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 				}
 			}
 		}
-
 	}
 
 
@@ -195,22 +194,54 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		mutationBehaviour.mutate(mutationRate);
 	};
 
+	public double calculateFitness(){
+		double[] rmses = this.getRMSE();
+		double fit = 0;
 
+		for (int i = 0; i < rmses.length; i++) {
+			fit += rmses[i];
+		}
+		fit = fit/rmses.length;
+
+		this.fitness = fit;
+		return fit;
+	}
+
+	public double calculateFitness(double[][] inputDataSet, double[][] targetDataSet){
+
+		this.fullPredict(inputDataSet, targetDataSet);
+
+		double[] rmses = this.getRMSE();
+		double fit = 0;
+
+		for (int i = 0; i < rmses.length; i++) {
+			fit += rmses[i];
+		}
+		fit = fit/rmses.length;
+
+		this.fitness = fit;
+		return fit;
+	}
 
 
 
 	@Override
 	public int compareTo(GeneticNeuralNet o) {
-		// TODO Auto-generated method stub
-		return 0;
+		int thisFittness = (int)(this.getFitness());
+		int otherFittness = (int)(o.getFitness());
+
+		return thisFittness-otherFittness;
 	}
 
 	public String getGenomeString(){
-		String out="[";
+		String out="";
+
 		for (int i = 0; i < genome.length; i++) {
-			out = out + genome[i] + ",";
+			out = out + genome[i];
+			if (i < genome.length-1){
+				out += ",";
+			}
 		}
-		out = out + "]";
 		return out;
 	}
 
@@ -222,9 +253,6 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	}
 	public double getFitness() {
 		return fitness;
-	}
-	public void setFitness(double fitness) {
-		this.fitness = fitness;
 	}
 
 	public int getGenomeLength(){

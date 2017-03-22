@@ -95,7 +95,7 @@ public class NeuralNet {
 	}
 
 	public double[][] calculatePredictionError(double[][] targetDataSet){
-		double[][] outcome = new double[prediction.length][this.getOutputNeuronsCount()];
+		double[][] outcome = new double[targetDataSet.length][targetDataSet[0].length];
 
 		for (int i = 0; i < outcome.length; i++) {
 			for (int j = 0; j < outcome[0].length; j++) {

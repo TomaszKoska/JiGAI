@@ -6,7 +6,7 @@ public class GeneticNeuralNetTester {
 
 	public static void runTest(){
 
-		GeneticNeuralNet nn = new GeneticNeuralNet(new int[]{2,1}, 4);
+		GeneticNeuralNet nn = new GeneticNeuralNet(new int[]{2,2}, 2);
 		nn.setActivationFunction("l");
 		nn.randomizeLayers();
 		nn.codeGenome();
@@ -33,6 +33,35 @@ public class GeneticNeuralNetTester {
 		System.out.println(nn.getGenomeString());
 		System.out.println(nn2.getGenomeString());
 
+		double[][] dataSet = new double[][]{
+			{ 0, 0 },
+			{ 1, 0 },
+			{ 0, 1 },
+			{ 1, 1 },
+			{ 1, -1 }
+		};
+		double[][] targetSet = new double[][]{
+			{ 0 },
+			{ 0 },
+			{ 0 },
+			{ 1 },
+			{ -1 }
+		};
+
+
+//		double[][] out = nn.predict(dataSet);
+//
+//		for (int i = 0; i < out.length; i++) {
+//			String line = "";
+//			for (int j = 0; j < out[0].length; j++) {
+//				line = line + out[i][j] + ",";
+//			}
+//			System.out.println(line);
+//		}
+
+		nn.fullPredict(dataSet, targetSet);
+		System.out.println(nn.calculateFitness());
+		System.out.println(nn.calculateFitness(dataSet, targetSet));
 	}
 
 }
