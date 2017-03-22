@@ -257,16 +257,17 @@ public class GeneticEngineTester {
 	public static void runTest(){
 		//define class of nns
 		int numberOfInputs = inputDataSet[0].length;
-		int[] neuronCounts = new int[]{6,6,6,6,6,1};
+		int[] neuronCounts = new int[]{6,1};
 
 		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.01,400);
 
 		ge.initialize();
-
+		ge.runNextTurn(inputDataSet, targetDataSet);
 		for (int i = 0; i < 1000; i++) {
 			ge.runNextTurn(inputDataSet, targetDataSet);
 			System.out.println(i + ".  " + ge.getBestFitness());
 		}
+		System.out.println("\n");
 		ge.printTop();
 
 

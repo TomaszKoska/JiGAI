@@ -46,8 +46,11 @@ public class GeneticEngine {
 		updateAge();
 		doTasks(inputDataSet,targetDataSet);
 		calculateFitness();
+
 		sort();
+
 		kill();
+
 		reproduce();
 
 	}

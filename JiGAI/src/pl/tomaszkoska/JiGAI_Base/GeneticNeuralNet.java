@@ -275,7 +275,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		int thisFittness = (int)(this.getFitness()*100000000);
 		int otherFittness = (int)(o.getFitness()*100000000);
 
-		return otherFittness-thisFittness;
+		return thisFittness-otherFittness;
 	}
 
 	public String getGenomeString(){

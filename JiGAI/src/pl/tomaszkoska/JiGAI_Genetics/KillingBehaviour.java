@@ -1,5 +1,6 @@
 package pl.tomaszkoska.JiGAI_Genetics;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
@@ -15,14 +16,19 @@ public class KillingBehaviour {
 	public void kill(){
 		/*In basic scenario half of the population dies*/
 
-		Iterator<GeneticNeuralNet> i = geneticEngine.getPopulation().iterator();
 
-		int j = (int)(geneticEngine.getPopulation().size()*7/8);
+		int j = 0;
+		int first = (int)(geneticEngine.getPopulation().size()*9/10);
 		int last = geneticEngine.getPopulation().size();
-		while (i.hasNext() && j < last) {
+
+
+		Iterator<GeneticNeuralNet> i = geneticEngine.getPopulation().iterator();
+		while (i.hasNext()) {
 			GeneticNeuralNet tmp = i.next();
+			if(j > first && j < last){
 				i.remove();
-				j++;
 			}
+			j++;
+		}
 	}
 }
