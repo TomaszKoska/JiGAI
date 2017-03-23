@@ -1,9 +1,14 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
 import pl.tomaszkoska.JiGAI_KillingBehaviours.KillingBehaviour;
 import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
@@ -194,6 +199,47 @@ public class GeneticEngine {
 		this.activationFunctionShortName = activationFunctionShortName;
 	}
 
+	public void saveInCSV(String path){
+		 CSVWriter writer;
+		try {
+		writer = new CSVWriter(new FileWriter(path), ',');
+
+		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
+			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
+			String singleLine = gnn.getGenomeString();
+			String[] entries = singleLine.split(",");
+		    writer.writeNext(entries);
+		}
+
+		 writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void readFromCSV(String path){
+		population = new ArrayList<GeneticNeuralNet>();
+		CSVReader reader = null;
+        try {
+            reader = new CSVReader(new FileReader(path),',');
+            String[] line;
+            double[] tmpGenome;
+            while ((line = reader.readNext()) != null) {
+            	tmpGenome = new double[line.length];
+            	for (int i = 0; i < line.length; i++) {
+            		tmpGenome[i] = Double.parseDouble(line[i]);
+				}
+            	GeneticNeuralNet gnn =  new GeneticNeuralNet(NEURON_COUNTS,INPUT_COUNT,activationFunctionShortName);
+            	gnn.setGenome(tmpGenome);
+            	gnn.decodeGenome();
+            	population.add(gnn);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
 
 
 }

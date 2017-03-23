@@ -6,6 +6,7 @@ import java.util.Iterator;
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.DecreasingChanceOfSurvival;
+import pl.tomaszkoska.JiGAI_KillingBehaviours.FitnessAndAgeBasedChanceOfSurvival;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.FitnessBasedChanceOfSurvival;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.TopSurvives;
 import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
@@ -137,126 +138,125 @@ public class GeneticEngineTester {
 		{0,0.37037037,0.479768786,0.434782609,0.4375,0.586956522,0.680851064,0.37254902,0.4,0.5,0.5,1,0.338461538,0.556818182,0.494505495,0.264150943,0.461538462,0.387755102,0.666666667}}
 ;
 	public static double[][] targetDataSet =new double[][]
-			{{	0.794466403	},
-		{	0.841897233	},
-		{	0.782608696	},
-		{	0.877470356	},
-		{	0.960474308	},
-		{	0.711462451	},
-		{	0.841897233	},
-		{	0.774703557	},
-		{	0.822134387	},
-		{	0.703557312	},
-		{	0.794466403	},
-		{	0.707509881	},
-		{	0.395256917	},
-		{	0.687747036	},
-		{	0.794466403	},
-		{	0.944664032	},
-		{	0.802371542	},
-		{	0.770750988	},
-		{	0.731225296	},
-		{	0.723320158	},
-		{	0.76284585	},
-		{	0.913043478	},
-		{	0.699604743	},
-		{	0.743083004	},
-		{	0.913043478	},
-		{	0.71541502	},
-		{	0.727272727	},
-		{	0.723320158	},
-		{	0.758893281	},
-		{	0.699604743	},
-		{	0.976284585	},
-		{	0.648221344	},
-		{	0.735177866	},
-		{	0.596837945	},
-		{	0.679841897	},
-		{	0.640316206	},
-		{	0.913043478	},
-		{	0.980237154	},
-		{	0.822134387	},
-		{	0.683794466	},
-		{	0.703557312	},
-		{	0.826086957	},
-		{	0.62055336	},
-		{	0.861660079	},
-		{	0.695652174	},
-		{	0.869565217	},
-		{	0.699604743	},
-		{	0.600790514	},
-		{	0.909090909	},
-		{	0.624505929	},
-		{	0.837944664	},
-		{	0.76284585	},
-		{	0.897233202	},
-		{	0.778656126	},
-		{	0.794466403	},
-		{	0.885375494	},
-		{	0.849802372	},
-		{	0.932806324	},
-		{	0.76284585	},
-		{	0.960474308	},
-		{	0.691699605	},
-		{	0.893280632	},
-		{	0.794466403	},
-		{	1	},
-		{	0.695652174	},
-		{	0.869565217	},
-		{	0.818181818	},
-		{	0.790513834	},
-		{	0.727272727	},
-		{	0.723320158	},
-		{	0.893280632	},
-		{	0.865612648	},
-		{	0.889328063	},
-		{	0.735177866	},
-		{	0.814229249	},
-		{	0.861660079	},
-		{	0.786561265	},
-		{	0.76284585	},
-		{	0.814229249	},
-		{	0.723320158	},
-		{	0.837944664	},
-		{	0.707509881	},
-		{	0.750988142	},
-		{	0.76284585	},
-		{	0.703557312	},
-		{	0.826086957	},
-		{	0.798418972	},
-		{	0.656126482	},
-		{	0.747035573	},
-		{	0.743083004	},
-		{	0.648221344	},
-		{	0.786561265	},
-		{	0.76284585	},
-		{	0.739130435	},
-		{	0.774703557	},
-		{	0.778656126	},
-		{	0.901185771	},
-		{	0.711462451	},
-		{	0.596837945	},
-		{	0.766798419	},
-		{	0.885375494	},
-		{	0.790513834	},
-		{	0.948616601	},
-		{	0.833992095	},
-		{	0.770750988	},
-		{	0.723320158	},
-		{	0.826086957	},
-		{	0.770750988	},
-		{	0.830039526	},
-		{	0.786561265	},
-		{	0.806324111	},
-		{	0.782608696	},
-		{	0.691699605	},
-		{	0.723320158	},
-		{	0.561264822	},
-		{	0.731225296	},
-		{	0.845849802	},
-		{	0.798418972	},
-		{	0	}}
-
+			{{0.346938776},
+		{0.387755102},
+		{0.530612245},
+		{0.714285714},
+		{0.469387755},
+		{0.591836735},
+		{0.571428571},
+		{0.346938776},
+		{0.448979592},
+		{0.448979592},
+		{0.346938776},
+		{0.530612245},
+		{0.346938776},
+		{0.408163265},
+		{0.530612245},
+		{0.591836735},
+		{0.367346939},
+		{0.510204082},
+		{0.571428571},
+		{0.530612245},
+		{0.346938776},
+		{0.387755102},
+		{0.510204082},
+		{0.367346939},
+		{0.285714286},
+		{0.040816327},
+		{0.510204082},
+		{0.612244898},
+		{0.693877551},
+		{0.387755102},
+		{0.734693878},
+		{0.591836735},
+		{0.591836735},
+		{0.387755102},
+		{0.489795918},
+		{0.428571429},
+		{0.857142857},
+		{1},
+		{0.510204082},
+		{0.020408163},
+		{0},
+		{0.428571429},
+		{0.12244898},
+		{0.428571429},
+		{0.408163265},
+		{0.551020408},
+		{0.306122449},
+		{0.163265306},
+		{0.469387755},
+		{0.204081633},
+		{0.06122449},
+		{0.612244898},
+		{0.979591837},
+		{0.612244898},
+		{0.408163265},
+		{0.285714286},
+		{0.142857143},
+		{0.448979592},
+		{0.346938776},
+		{0.653061224},
+		{0.530612245},
+		{0.857142857},
+		{0.795918367},
+		{0.469387755},
+		{0.306122449},
+		{0.632653061},
+		{0.632653061},
+		{0.591836735},
+		{0.714285714},
+		{0.632653061},
+		{0.693877551},
+		{0.673469388},
+		{0.489795918},
+		{0.285714286},
+		{0.551020408},
+		{0.755102041},
+		{0.551020408},
+		{0.224489796},
+		{0.367346939},
+		{0.530612245},
+		{0.530612245},
+		{0.469387755},
+		{0.489795918},
+		{0.367346939},
+		{0.469387755},
+		{0.551020408},
+		{0.448979592},
+		{0.346938776},
+		{0.530612245},
+		{0.632653061},
+		{0.530612245},
+		{0.346938776},
+		{0.489795918},
+		{0.408163265},
+		{0.530612245},
+		{0.693877551},
+		{0.489795918},
+		{0.469387755},
+		{0.408163265},
+		{0.510204082},
+		{0.346938776},
+		{0.326530612},
+		{0.551020408},
+		{0.653061224},
+		{0.489795918},
+		{0.367346939},
+		{0.367346939},
+		{0.265306122},
+		{0.551020408},
+		{0.530612245},
+		{0.551020408},
+		{0.326530612},
+		{0.306122449},
+		{0.551020408},
+		{0.408163265},
+		{0.387755102},
+		{0.408163265},
+		{0.387755102},
+		{0.224489796}}
 	;
 
 	public static double[][] inputDataSet2
@@ -272,49 +272,53 @@ public class GeneticEngineTester {
 	public static void runTest(){
 		//define class of nns
 		int numberOfInputs = inputDataSet[0].length;
-		int[] neuronCounts = new int[]{2,2,1};
+		int[] neuronCounts = new int[]{20,10,1};
 		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
 		ge.setSTART_POPULATION_SIZE(1000);
-		ge.setMUTATION_RATE(0.4);
-		ge.setKillingBehaviour(new TopSurvives(ge,5));
+		ge.setMUTATION_RATE(0.1);
+//		ge.setKillingBehaviour(new FitnessAndAgeBasedChanceOfSurvival(ge));
+		ge.setKillingBehaviour(new TopSurvives(ge,10));
 //		ge.setKillingBehaviour(new FitnessBasedChanceOfSurvival(ge));
 		ge.setReproductionBehaviour(new ReproductionBehaviour(ge));
-		ge.setMutationBehaviourName("am");
+		ge.setMutationBehaviourName("rm");
 		ge.setInheritanceBehaviourName("ri");
-		ge.setActivationFunctionShortName("l");
+		ge.setActivationFunctionShortName("th");
 
 
-		ge.initialize();
+//		ge.initialize();
+		ge.readFromCSV("D:\\test\\genetics\\tmp.csv");
 
-		System.out.println(ge.getPopulation().get(0).getGenomeString());
+//		for (int i = 0; i < ge.getPopulation().size(); i++) {
+//			System.out.println(ge.getPopulation().get(i).getGenomeString());
+//		}
+
+//		System.out.println(ge.getPopulation().get(0).getGenomeString());
 		System.out.println(ge.getPopulation().get(0));
 		System.out.println("\n");
 		System.out.println(ge.getPopulation().get(0).weightsToString());
 
 
-//		ge.runNextTurn(inputDataSet2, targetDataSet2);
-		for (int i = 0; i < 200; i++) {
+
+
+//
+		for (int i = 0; i < 2000; i++) {
 			ge.runNextTurn(inputDataSet, targetDataSet);
 			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
-//			for (int j = 0; j < ge.getPopulation().get(0).getPrediction().length; j++) {
-//				System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]);
-//				System.out.println("" + ge.getPopulation().get(0).getAge());
-//			}
-			if(ge.getPopulation().get(0).getAge()>400){
+			if(ge.getPopulation().get(0).getAge()>200){
 				break;
 			}
 		}
-//		System.out.println("\n");
-//		ge.printTop();
+
+		ge.saveInCSV("D:\\test\\genetics\\tmp.csv");
 
 		for (int j = 0; j < ge.getPopulation().get(0).getPrediction().length; j++) {
 			System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]);
 		}
-		System.out.println("\n");
-		System.out.println("\n");
-		System.out.println(ge.getPopulation().get(0));
-		System.out.println("\n");
-		System.out.println(ge.getPopulation().get(0).weightsToString());
+//		System.out.println("\n");
+//		System.out.println("\n");
+//		System.out.println(ge.getPopulation().get(0));
+//		System.out.println("\n");
+//		System.out.println(ge.getPopulation().get(0).weightsToString());
 	}
 
 
@@ -343,8 +347,6 @@ public class GeneticEngineTester {
 			System.out.println("" + gnn.getError()[j][0]);
 		}
 		System.out.println(gnn.getRMSE()[0]);
-
-
 	}
 
 }
