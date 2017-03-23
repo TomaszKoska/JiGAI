@@ -1,4 +1,4 @@
-package pl.tomaszkoska.JiGAI_Genetics;
+package pl.tomaszkoska.JiGAI_InheritanceBehaviours;
 
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 

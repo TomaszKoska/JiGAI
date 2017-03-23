@@ -1,13 +1,12 @@
-package pl.tomaszkoska.JiGAI_Genetics;
+package pl.tomaszkoska.JiGAI_KillingBehaviours;
 
-import java.util.Collections;
+
 import java.util.Iterator;
-
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 
 public class KillingBehaviour {
-	private GeneticEngine geneticEngine;
+	protected GeneticEngine geneticEngine;
 
 	public KillingBehaviour(GeneticEngine geneticEngine) {
 		this.geneticEngine = geneticEngine;
@@ -18,7 +17,7 @@ public class KillingBehaviour {
 
 
 		int j = 0;
-		int first = (int)(geneticEngine.getPopulation().size()*9/10);
+		int first = (int)(geneticEngine.getPopulation().size()*1/2);
 		int last = geneticEngine.getPopulation().size();
 
 

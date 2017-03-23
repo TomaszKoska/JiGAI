@@ -1,4 +1,4 @@
-package pl.tomaszkoska.JiGAI_Genetics;
+package pl.tomaszkoska.JiGAI_ReproductionBehaviours;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,6 +28,9 @@ public class ReproductionBehaviour {
 
 		for (int i = currentPopulation; i < geneticEngine.getSTART_POPULATION_SIZE(); i++) {
 			GeneticNeuralNet child  = new GeneticNeuralNet(geneticEngine.getNEURON_COUNTS(),geneticEngine.getINPUT_COUNT());
+
+			child.setInheritanceBehaviourBasedOnName(geneticEngine.getInheritanceBehaviourName());
+			child.setMutationBehaviourBasedOnName(geneticEngine.getMutationBehaviourName());
 
 			int motherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);
 			int fatherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);

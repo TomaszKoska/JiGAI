@@ -5,6 +5,10 @@ import java.util.Iterator;
 
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
+import pl.tomaszkoska.JiGAI_KillingBehaviours.DecreasingChanceOfSurvival;
+import pl.tomaszkoska.JiGAI_KillingBehaviours.TopSurvives;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
+import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
 
 public class GeneticEngineTester {
 
@@ -258,12 +262,19 @@ public class GeneticEngineTester {
 		//define class of nns
 		int numberOfInputs = inputDataSet[0].length;
 		int[] neuronCounts = new int[]{6,1};
-
-		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.01,400);
+		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1000);
+		ge.setSTART_POPULATION_SIZE(1000);
+		ge.setMUTATION_RATE(0.01);
+		ge.setKillingBehaviour(new TopSurvives(ge,0.1));
+		ge.setReproductionBehaviour(new ReproductionBehaviour(ge));
+		ge.setMutationBehaviourName("rm");
+		ge.setInheritanceBehaviourName("ri");
 
 		ge.initialize();
+
+
 		ge.runNextTurn(inputDataSet, targetDataSet);
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 6000; i++) {
 			ge.runNextTurn(inputDataSet, targetDataSet);
 			System.out.println(i + ".  " + ge.getBestFitness());
 		}

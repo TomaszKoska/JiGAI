@@ -3,8 +3,13 @@ package pl.tomaszkoska.JiGAI_Base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import pl.tomaszkoska.JiGAI_Genetics.KillingBehaviour;
-import pl.tomaszkoska.JiGAI_Genetics.ReproductionBehaviour;
+
+
+import pl.tomaszkoska.JiGAI_InheritanceBehaviours.RandomInheritance;
+import pl.tomaszkoska.JiGAI_KillingBehaviours.KillingBehaviour;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.RandomMutation;
+import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
 
 
 public class GeneticEngine {
@@ -12,7 +17,11 @@ public class GeneticEngine {
 	protected ArrayList<GeneticNeuralNet> population;
 
 	protected KillingBehaviour killingBehaviour;
-	ReproductionBehaviour reproductionBehaviour;
+	protected ReproductionBehaviour reproductionBehaviour;
+
+	protected String inheritanceBehaviourName;
+	protected String mutationBehaviourName;
+
 
 	protected double MUTATION_RATE;
 	protected int START_POPULATION_SIZE;
@@ -30,6 +39,8 @@ public class GeneticEngine {
 		NEURON_COUNTS = nEURON_COUNTS;
 		killingBehaviour = new KillingBehaviour(this);
 		reproductionBehaviour = new ReproductionBehaviour(this);
+		inheritanceBehaviourName = "ri";
+		mutationBehaviourName = "rm";
 	}
 
 	public void initialize() {
@@ -139,5 +150,47 @@ public class GeneticEngine {
 	public double getBestFitness(){
 		return population.get(0).getFitness();
 	}
+
+	public KillingBehaviour getKillingBehaviour() {
+		return killingBehaviour;
+	}
+
+	public void setKillingBehaviour(KillingBehaviour killingBehaviour) {
+		this.killingBehaviour = killingBehaviour;
+	}
+
+	public ReproductionBehaviour getReproductionBehaviour() {
+		return reproductionBehaviour;
+	}
+
+	public void setReproductionBehaviour(ReproductionBehaviour reproductionBehaviour) {
+		this.reproductionBehaviour = reproductionBehaviour;
+	}
+
+	public void setInheritanceBehaviour(String ibShortName){
+		inheritanceBehaviourName = ibShortName;
+	}
+
+	public void setMutationBehaviour(String mbShortName){
+		mutationBehaviourName = mbShortName;
+	}
+
+	public String getInheritanceBehaviourName() {
+		return inheritanceBehaviourName;
+	}
+
+	public void setInheritanceBehaviourName(String inheritanceBehaviourName) {
+		this.inheritanceBehaviourName = inheritanceBehaviourName;
+	}
+
+	public String getMutationBehaviourName() {
+		return mutationBehaviourName;
+	}
+
+	public void setMutationBehaviourName(String mutationBehaviourName) {
+		this.mutationBehaviourName = mutationBehaviourName;
+	}
+
+
 
 }

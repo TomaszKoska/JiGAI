@@ -1,15 +1,17 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import java.util.Iterator;
 import java.util.Random;
 
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
-import pl.tomaszkoska.JiGAI_Genetics.InheritanceBehaviour;
-import pl.tomaszkoska.JiGAI_Genetics.MutationBehaviour;
-import pl.tomaszkoska.JiGAI_Genetics.RandomInheritance;
-import pl.tomaszkoska.JiGAI_Genetics.RandomMutation;
+import pl.tomaszkoska.JiGAI_InheritanceBehaviours.InheritanceBehaviour;
+import pl.tomaszkoska.JiGAI_InheritanceBehaviours.RandomInheritance;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.MutationBehaviour;
+import pl.tomaszkoska.JiGAI_MutationBehaviours.RandomMutation;
 
 public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeuralNet> {
 	protected double[] genome;
@@ -201,7 +203,7 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		//m+1...n - code number of activation function
 		//n+1...p - biases for each neuron
 		//p+1...q - weights of each neuron one by one (input layer first)
-		int min=3;
+		int min=4;
 		int max=4;
 		int mutationStart = UNMUTABLE_PART_OF_GENOME;
 		Random random = new Random();
@@ -323,6 +325,21 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	public void setInheritanceBehaviour(InheritanceBehaviour inheritanceBehaviour) {
 		this.inheritanceBehaviour = inheritanceBehaviour;
 	}
+
+	public void setInheritanceBehaviourBasedOnName(String ibShortName){
+		if(ibShortName.toLowerCase().equals("ri")){
+				this.setInheritanceBehaviour(new RandomInheritance(this));
+		}
+	}
+
+	public void setMutationBehaviourBasedOnName(String mbShortName){
+		if(mbShortName.toLowerCase().equals("rm")){
+				this.setMutationBehaviour(new RandomMutation(this,-1,1));
+		}else if(mbShortName.toLowerCase().equals("am")){
+				this.setMutationBehaviour(new AlterationMutation(this));
+		}
+	}
+
 
 	public int getAge() {
 		return age;
