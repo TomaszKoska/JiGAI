@@ -2,6 +2,8 @@ package pl.tomaszkoska.JiGAI_Base;
 
 import pl.tomaszkoska.JiGAI_Activation.ActivationFunctionBehaviour;
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Exceptions.MyException;
 
@@ -129,5 +131,17 @@ public class Neuron {
 		this.bias = bias;
 	}
 
+
+	public void setActivationFunction(String name){
+		if(name.toLowerCase().equals("bs")){
+			this.setActivationFunctionBehaviour(new BinarySigmoidActivationFunction(1,0.5));
+		} else if(name.toLowerCase().equals("s")){
+			this.setActivationFunctionBehaviour(new SigmoidActivationFunction(1));
+		} else if(name.toLowerCase().equals("ht")){
+			this.setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
+		} else{
+			this.setActivationFunctionBehaviour(new LinearActivationFunction());
+		}
+	}
 
 }

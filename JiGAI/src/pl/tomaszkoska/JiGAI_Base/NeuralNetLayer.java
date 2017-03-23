@@ -46,23 +46,9 @@ public class NeuralNetLayer {
 	}
 
 	public void setActivationFunction(String activationFunctionName){
-		if(activationFunctionName.toLowerCase().equals("bs")){
 			for (int i = 0; i < neurons.length; i++) {
-				neurons[i].setActivationFunctionBehaviour(new BinarySigmoidActivationFunction(1,0.5));
+			neurons[i].setActivationFunction(activationFunctionName);
 			}
-		} else if(activationFunctionName.toLowerCase().equals("s")){
-			for (int i = 0; i < neurons.length; i++) {
-			neurons[i].setActivationFunctionBehaviour(new SigmoidActivationFunction(1));
-			}
-		} else if(activationFunctionName.toLowerCase().equals("ht")){
-				for (int i = 0; i < neurons.length; i++) {
-				neurons[i].setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
-			}
-		} else{
-			for (int i = 0; i < neurons.length; i++) {
-			neurons[i].setActivationFunctionBehaviour(new LinearActivationFunction());
-			}
-		}
 	}
 
 

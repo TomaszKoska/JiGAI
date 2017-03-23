@@ -1,5 +1,4 @@
 package pl.tomaszkoska.JiGAI_MutationBehaviours;
-
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 
 public class RandomMutation implements MutationBehaviour {
@@ -18,7 +17,8 @@ public class RandomMutation implements MutationBehaviour {
 
 	@Override
 	public void mutate(double mutationRate) {
-		for (int i = GeneticNeuralNet.UNMUTABLE_PART_OF_GENOME; i < child.getGenomeLength(); i++) {
+
+		for (int i = 0; i < child.getGenomeLength(); i++) {
 			if(Math.random() < mutationRate){
 				child.getGenome()[i] = minValue + Math.random()*(maxValue-minValue);
 			}

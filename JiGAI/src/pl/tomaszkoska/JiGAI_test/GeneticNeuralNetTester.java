@@ -47,8 +47,8 @@ public class GeneticNeuralNetTester {
 			{ 1 },
 			{ -1 }
 		};
-		GeneticNeuralNet nn = new GeneticNeuralNet(new int[]{2,1}, 2);
-		GeneticNeuralNet nn2 = new GeneticNeuralNet(new int[]{2,1}, 2);
+		GeneticNeuralNet nn = new GeneticNeuralNet(new int[]{2,1}, 2,"l");
+		GeneticNeuralNet nn2 = new GeneticNeuralNet(new int[]{2,1}, 2,"l");
 		nn.setActivationFunction("ht");
 		nn.randomizeLayers();
 		nn.codeGenome();

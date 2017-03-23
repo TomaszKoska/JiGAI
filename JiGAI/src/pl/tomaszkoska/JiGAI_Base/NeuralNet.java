@@ -11,6 +11,7 @@ public class NeuralNet {
 
 	protected double[][] prediction; //last calculated prediction
 	protected double[][] error; // last calculated error
+	protected String activationFunctionShortName;
 
 
 	public NeuralNet(){
@@ -31,6 +32,23 @@ public class NeuralNet {
 			}
 			inputVariableCount = numberOfInputVariables;
 		}
+		activationFunctionShortName = "ht";
+
+	}
+
+	public NeuralNet(int[] neuronCounts, int numberOfInputVariables, String activationFunctionShortName) {
+		if (neuronCounts.length < 1){
+			System.out.println("we need at least one dimention!");
+		}
+		else{
+			layers = new NeuralNetLayer[neuronCounts.length];
+			layers[0] = new NeuralNetLayer(neuronCounts[0],numberOfInputVariables);
+			for (int i = 1; i < layers.length; i++) {
+				layers[i] = new NeuralNetLayer(neuronCounts[i],layers[0]);
+			}
+			inputVariableCount = numberOfInputVariables;
+		}
+		this.activationFunctionShortName = activationFunctionShortName;
 
 	}
 
@@ -195,6 +213,20 @@ public class NeuralNet {
 
 	public void setLearningMethod(LearningMethod learningMethod) {
 		this.learningMethod = learningMethod;
+	}
+
+	public String getActivationFunctionShortName() {
+		return activationFunctionShortName;
+	}
+
+	public void setActivationFunctionShortName(String activationFunctionShortName) {
+		this.activationFunctionShortName = activationFunctionShortName;
+	}
+
+	public void setActivationFunction(){
+		for (int i = 0; i < layers.length; i++) {
+		layers[i].setActivationFunction(activationFunctionShortName);
+		}
 	}
 
 

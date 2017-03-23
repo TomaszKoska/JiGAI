@@ -5,10 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 
-import pl.tomaszkoska.JiGAI_InheritanceBehaviours.RandomInheritance;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.KillingBehaviour;
-import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
-import pl.tomaszkoska.JiGAI_MutationBehaviours.RandomMutation;
 import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
 
 
@@ -21,7 +18,7 @@ public class GeneticEngine {
 
 	protected String inheritanceBehaviourName;
 	protected String mutationBehaviourName;
-
+	protected String activationFunctionShortName;
 
 	protected double MUTATION_RATE;
 	protected int START_POPULATION_SIZE;
@@ -41,12 +38,13 @@ public class GeneticEngine {
 		reproductionBehaviour = new ReproductionBehaviour(this);
 		inheritanceBehaviourName = "ri";
 		mutationBehaviourName = "rm";
+		activationFunctionShortName = "ht";
 	}
 
 	public void initialize() {
 		population = new ArrayList<GeneticNeuralNet>();
 		for (int i = 0; i < START_POPULATION_SIZE; i++) {
-			GeneticNeuralNet gnn = new GeneticNeuralNet(NEURON_COUNTS,INPUT_COUNT);
+			GeneticNeuralNet gnn = new GeneticNeuralNet(NEURON_COUNTS,INPUT_COUNT, activationFunctionShortName);
 			gnn.makeRandom();
 			gnn.decodeGenome();
 			population.add(gnn);
@@ -57,11 +55,8 @@ public class GeneticEngine {
 		updateAge();
 		doTasks(inputDataSet,targetDataSet);
 		calculateFitness();
-
 		sort();
-
 		kill();
-
 		reproduce();
 
 	}
@@ -189,6 +184,14 @@ public class GeneticEngine {
 
 	public void setMutationBehaviourName(String mutationBehaviourName) {
 		this.mutationBehaviourName = mutationBehaviourName;
+	}
+
+	public String getActivationFunctionShortName() {
+		return activationFunctionShortName;
+	}
+
+	public void setActivationFunctionShortName(String activationFunctionShortName) {
+		this.activationFunctionShortName = activationFunctionShortName;
 	}
 
 

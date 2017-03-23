@@ -6,6 +6,7 @@ import java.util.Iterator;
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.DecreasingChanceOfSurvival;
+import pl.tomaszkoska.JiGAI_KillingBehaviours.FitnessBasedChanceOfSurvival;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.TopSurvives;
 import pl.tomaszkoska.JiGAI_MutationBehaviours.AlterationMutation;
 import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
@@ -134,9 +135,7 @@ public class GeneticEngineTester {
 		{0.3,-1.8,0.4,0.5,0.4,0,0.4,0.3,-0.8,0,-0.1,0.4,0,-0.7,4.4,0.2,0.2,0.2,0.4,1.1},
 		{0.4,-0.6,0.4,0.3,0.6,0.1,-1,0.2,0,0.2,0.3,0.1,0.2,0,2.8,0.4,0.3,-0.2,0.3,-1.8},
 		{1.2,19.6,0.6,-0.1,0.5,0.1,-0.8,-0.6,0.8,0.1,-0.1,0,-0.4,0.3,-0.5,0.1,0.6,0,0.4,-0.6}}
-
 			;
-
 	public static double[][] targetDataSet =new double[][]{{0.3},
 		{0.6},
 		{-0.2},
@@ -258,30 +257,56 @@ public class GeneticEngineTester {
 		{0.8}}
 	;
 
+	public static double[][] inputDataSet2
+	= new double[][]{{1,1},{0,1},{1,0},{0,0}};
+
+			public static double[][] targetDataSet2 =new double[][]{{0},
+			{1},
+			{1},
+			{0}};
+
+
+
 	public static void runTest(){
 		//define class of nns
-		int numberOfInputs = inputDataSet[0].length;
-		int[] neuronCounts = new int[]{6,1};
-		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1000);
+		int numberOfInputs = inputDataSet2[0].length;
+		int[] neuronCounts = new int[]{2,1};
+		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
 		ge.setSTART_POPULATION_SIZE(1000);
-		ge.setMUTATION_RATE(0.01);
-		ge.setKillingBehaviour(new TopSurvives(ge,0.1));
+		ge.setMUTATION_RATE(0.2);
+		ge.setKillingBehaviour(new TopSurvives(ge,1));
+//		ge.setKillingBehaviour(new FitnessBasedChanceOfSurvival(ge));
 		ge.setReproductionBehaviour(new ReproductionBehaviour(ge));
 		ge.setMutationBehaviourName("rm");
 		ge.setInheritanceBehaviourName("ri");
+		ge.setActivationFunctionShortName("l");
+
 
 		ge.initialize();
 
+		System.out.println(ge.getPopulation().get(0).getGenomeString());
+		System.out.println(ge.getPopulation().get(0).weightsToString());
 
-		ge.runNextTurn(inputDataSet, targetDataSet);
-		for (int i = 0; i < 6000; i++) {
-			ge.runNextTurn(inputDataSet, targetDataSet);
-			System.out.println(i + ".  " + ge.getBestFitness());
+
+
+//		ge.runNextTurn(inputDataSet2, targetDataSet2);
+		for (int i = 0; i < 1000; i++) {
+			ge.runNextTurn(inputDataSet2, targetDataSet2);
+			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
+//			for (int j = 0; j < ge.getPopulation().get(0).getPrediction().length; j++) {
+//				System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]);
+//				System.out.println("" + ge.getPopulation().get(0).getAge());
+//			}
 		}
+//		System.out.println("\n");
+//		ge.printTop();
+
+		for (int j = 0; j < ge.getPopulation().get(0).getPrediction().length; j++) {
+			System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]);
+		}
+
 		System.out.println("\n");
-		ge.printTop();
-
-
+		System.out.println(ge.getPopulation().get(0).weightsToString());
 	}
 
 }

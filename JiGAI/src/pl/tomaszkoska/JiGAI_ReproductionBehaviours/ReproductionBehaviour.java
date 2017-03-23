@@ -31,6 +31,7 @@ public class ReproductionBehaviour {
 
 			child.setInheritanceBehaviourBasedOnName(geneticEngine.getInheritanceBehaviourName());
 			child.setMutationBehaviourBasedOnName(geneticEngine.getMutationBehaviourName());
+			child.setActivationFunction(geneticEngine.getActivationFunctionShortName());
 
 			int motherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);
 			int fatherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);
