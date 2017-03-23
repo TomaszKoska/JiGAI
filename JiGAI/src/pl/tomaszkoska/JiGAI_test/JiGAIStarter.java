@@ -9,6 +9,7 @@ public class JiGAIStarter {
 		//NeuralNetTester.runTest();
 //		GeneticNeuralNetTester.runTest();
 		GeneticEngineTester.runTest();
+//		GeneticEngineTester.runTest2();
 	}
 
 }

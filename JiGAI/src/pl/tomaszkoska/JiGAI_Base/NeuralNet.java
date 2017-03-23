@@ -44,7 +44,7 @@ public class NeuralNet {
 			layers = new NeuralNetLayer[neuronCounts.length];
 			layers[0] = new NeuralNetLayer(neuronCounts[0],numberOfInputVariables);
 			for (int i = 1; i < layers.length; i++) {
-				layers[i] = new NeuralNetLayer(neuronCounts[i],layers[0]);
+				layers[i] = new NeuralNetLayer(neuronCounts[i],layers[i-1]);
 			}
 			inputVariableCount = numberOfInputVariables;
 		}

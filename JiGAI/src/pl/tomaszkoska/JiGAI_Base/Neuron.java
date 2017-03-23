@@ -47,7 +47,8 @@ public class Neuron {
 
 	public double summingFunction(double[] inputValues){
 		double sum = 0;
-
+//		System.out.println("inp Val: " +inputValues.length);
+//		System.out.println("weights: " +weights.length);
 		try {
 			if(inputValues.length != weights.length){
 				throw new MyException

@@ -27,11 +27,10 @@ public class ReproductionBehaviour {
 		int currentPopulation = population.size();
 
 		for (int i = currentPopulation; i < geneticEngine.getSTART_POPULATION_SIZE(); i++) {
-			GeneticNeuralNet child  = new GeneticNeuralNet(geneticEngine.getNEURON_COUNTS(),geneticEngine.getINPUT_COUNT());
+			GeneticNeuralNet child  = new GeneticNeuralNet(geneticEngine.getNEURON_COUNTS(),geneticEngine.getINPUT_COUNT(),geneticEngine.getActivationFunctionShortName());
 
 			child.setInheritanceBehaviourBasedOnName(geneticEngine.getInheritanceBehaviourName());
 			child.setMutationBehaviourBasedOnName(geneticEngine.getMutationBehaviourName());
-			child.setActivationFunction(geneticEngine.getActivationFunctionShortName());
 
 			int motherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);
 			int fatherNumber = ThreadLocalRandom.current().nextInt(0,  currentPopulation);
@@ -41,6 +40,7 @@ public class ReproductionBehaviour {
 			child.intherit(population.get(motherNumber), population.get(fatherNumber));
 			child.introduceMutation(geneticEngine.getMUTATION_RATE());
 			child.decodeGenome();
+
 			geneticEngine.getPopulation().add(child);
 		}
 	}
