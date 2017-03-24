@@ -31,7 +31,7 @@ public class FitnessAndAgeBasedChanceOfSurvival extends KillingBehaviour {
 			GeneticNeuralNet tmp = i.next();
 			cumulated += tmp.getFitness();
 			cumulatedAge += tmp.getAge();
-			if(Math.random() < 2*cumulated/sumOfFitness || Math.random()< 1-(sumOfAge/sumOfAge)){
+			if(Math.random() < 2*cumulated/sumOfFitness && Math.random()< 1-(sumOfAge/sumOfAge)){
 				i.remove();
 			}
 		}

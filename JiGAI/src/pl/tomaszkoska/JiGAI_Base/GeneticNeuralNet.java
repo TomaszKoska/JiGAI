@@ -1,7 +1,6 @@
 package pl.tomaszkoska.JiGAI_Base;
 
-import java.util.Iterator;
-import java.util.Random;
+
 
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
@@ -21,12 +20,14 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	protected MutationBehaviour mutationBehaviour;
 	protected InheritanceBehaviour inheritanceBehaviour;
 	protected int age;	//how many epochs did this net survive?
-
+	protected int points;
 
 	public GeneticNeuralNet(int[] neuronCounts, int numberOfInputVariables) {
 		super(neuronCounts, numberOfInputVariables);
 		codeGenome();
 		setAllGeneticBehaviour();
+		points=0;
+		age=0;
 	}
 	public GeneticNeuralNet(int[] neuronCounts,
 			int numberOfInputVariables,
@@ -34,14 +35,8 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 		super(neuronCounts, numberOfInputVariables,activationFunctionShortName);
 		codeGenome();
 		setAllGeneticBehaviour();
-	}
-
-
-	public GeneticNeuralNet(double[] genome) {
-		super();
-		this.genome = genome;
-		decodeGenome();
-		setAllGeneticBehaviour();
+		points=0;
+		age=0;
 	}
 
 
@@ -280,7 +275,15 @@ public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeu
 	public void setActivationFunctionShortName(String activationFunctionShortName) {
 		this.activationFunctionShortName = activationFunctionShortName;
 	}
-
+	public int getPoints() {
+		return points;
+	}
+	public void setPoints(int points) {
+		this.points = points;
+	}
+	public void addPoints(int apoints) {
+		this.points += apoints;
+	}
 
 
 

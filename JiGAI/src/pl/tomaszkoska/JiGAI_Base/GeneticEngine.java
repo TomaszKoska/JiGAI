@@ -61,11 +61,30 @@ public class GeneticEngine {
 		doTasks(inputDataSet,targetDataSet);
 		calculateFitness();
 		sort();
+		givePoints();
 		kill();
 		reproduce();
 
 	}
 
+
+	private void givePoints() {
+		int i = 0;
+		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
+			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
+			if(i<population.size()*1/10){
+			gnn.addPoints(2);
+			}else if(i<population.size()*1/4){
+			gnn.addPoints(1);
+			}else if(i<population.size()*2/4){
+				gnn.addPoints(0);
+			}else{
+				gnn.addPoints(-3);
+			}
+
+			i++;
+		}
+	}
 
 	private void doTasks(double[][] inputDataSet,double[][] targetDataSet) {
 
@@ -149,6 +168,16 @@ public class GeneticEngine {
 	}
 	public double getBestFitness(){
 		return population.get(0).getFitness();
+	}
+
+	public double getAverageAge(){
+		double age = 0;
+		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
+			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
+			age+= gnn.getAge();
+		}
+		age = age/population.size();
+		return age;
 	}
 
 	public KillingBehaviour getKillingBehaviour() {
@@ -239,6 +268,27 @@ public class GeneticEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
+	}
+
+	public double[][] votePredict(double[][] inputs, double[][] targets, int howManyVotes){
+		double [][] votePrediction = new double [targets.length][targets[0].length];
+
+		Collections.sort(population);
+		Collections.sort(population, (o1, o2) -> o2.getPoints() - o1.getPoints());
+		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
+			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
+			gnn.fullPredict(inputs, targets);
+		}
+
+		for (int i = 0; i < votePrediction.length; i++) {
+			for (int j = 0; j < votePrediction[i].length; j++) {
+				for (int k = 0; k < Math.min(population.size(),howManyVotes); k++) {
+					votePrediction[i][j] = population.get(k).getPrediction()[i][j];
+				}
+			}
+		}
+
+		return votePrediction;
 	}
 
 
