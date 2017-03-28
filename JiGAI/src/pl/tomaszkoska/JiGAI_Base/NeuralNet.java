@@ -1,8 +1,15 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import java.io.Serializable;
+
 import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
 
-public class NeuralNet {
+public class NeuralNet implements Serializable{
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	protected LearningMethod learningMethod;
 

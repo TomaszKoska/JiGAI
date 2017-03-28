@@ -7,6 +7,11 @@ import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 
 public class FitnessBasedChanceOfSurvival extends KillingBehaviour {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public FitnessBasedChanceOfSurvival(GeneticEngine geneticEngine) {
 		super(geneticEngine);
 	}

@@ -11,8 +11,9 @@ public class JiGAIStarter {
 //		GeneticEngineTester.runTest();
 //		GeneticEngineTester.runTest2();
 //		GeneticEngineTester.runTest3();
-		GeneticEngineTester.runTest4();
+//		GeneticEngineTester.runTest4();
 //		HelperTester.runTest();
+		LearningTest.runTest();
 
 	}
 

@@ -2,6 +2,8 @@ package pl.tomaszkoska.JiGAI_Base;
 
 
 
+import java.io.Serializable;
+
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
@@ -14,7 +16,14 @@ import pl.tomaszkoska.JiGAI_MutationBehaviours.MutationBehaviour;
 import pl.tomaszkoska.JiGAI_MutationBehaviours.RandomMutation;
 import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
 
-public class GeneticNeuralNet extends NeuralNet implements Comparable<GeneticNeuralNet> {
+public class GeneticNeuralNet
+	extends NeuralNet
+	implements Comparable<GeneticNeuralNet> , Serializable
+	{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	protected double[] genome;
 	protected double fitness; //can be integer, can be double, can even be boolean
 	protected MutationBehaviour mutationBehaviour;

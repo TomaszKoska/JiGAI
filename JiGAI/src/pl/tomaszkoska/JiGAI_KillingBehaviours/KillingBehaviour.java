@@ -1,11 +1,16 @@
 package pl.tomaszkoska.JiGAI_KillingBehaviours;
 
 
+import java.io.Serializable;
 import java.util.Iterator;
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
 
-public class KillingBehaviour {
+public class KillingBehaviour implements Serializable{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	protected GeneticEngine geneticEngine;
 
 	public KillingBehaviour(GeneticEngine geneticEngine) {

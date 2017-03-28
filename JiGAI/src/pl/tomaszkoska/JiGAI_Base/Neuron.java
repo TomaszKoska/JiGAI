@@ -1,14 +1,23 @@
 package pl.tomaszkoska.JiGAI_Base;
 
+import java.io.Serializable;
+
 import pl.tomaszkoska.JiGAI_Activation.ActivationFunctionBehaviour;
 import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Exceptions.MyException;
+import sun.misc.GC.LatencyRequest;
 
-public class Neuron {
+public class Neuron implements Serializable{
 
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	private double[] lastInput; //i believe that I will need that for backpropagation to work
 	private double[] weights;
 	private double bias;
 	ActivationFunctionBehaviour activationFunctionBehaviour;
@@ -16,6 +25,7 @@ public class Neuron {
 
 	public Neuron(int numberOfInputs){
 		this.weights = new double[numberOfInputs];
+		this.lastInput = new double[numberOfInputs];
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 
 	}
@@ -24,6 +34,7 @@ public class Neuron {
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
+		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 
 	}
@@ -31,6 +42,7 @@ public class Neuron {
 	public Neuron(int numberOfInputs,
 			ActivationFunctionBehaviour activationFunctionBehaviour){
 		this.weights = new double[numberOfInputs];
+		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
 
 	}
@@ -41,14 +53,14 @@ public class Neuron {
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
+		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
 
 	}
 
 	public double summingFunction(double[] inputValues){
 		double sum = 0;
-//		System.out.println("inp Val: " +inputValues.length);
-//		System.out.println("weights: " +weights.length);
+
 		try {
 			if(inputValues.length != weights.length){
 				throw new MyException
@@ -80,7 +92,8 @@ public class Neuron {
 	}
 
 	public double processInput(double[] inputValues){
-			return activationFunctionBehaviour.compute((summingFunction(inputValues)));
+		lastInput = inputValues;
+		return activationFunctionBehaviour.compute((summingFunction(inputValues)));
 	}
 
 	public void updateWeights(double biasInfo, double[] updatingInfo){
@@ -142,6 +155,19 @@ public class Neuron {
 			this.setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
 		} else{
 			this.setActivationFunctionBehaviour(new LinearActivationFunction());
+		}
+	}
+
+	public double[] getLastInput() {
+		return lastInput;
+	}
+	public void setLastInput(double[] lastInput) {
+		this.lastInput = lastInput;
+	}
+
+	public void correctWeights(double errorTerm, double learningRate){
+		for (int i = 0; i < weights.length; i++) {
+			weights[i] = learningRate * errorTerm * lastInput[i];
 		}
 	}
 
