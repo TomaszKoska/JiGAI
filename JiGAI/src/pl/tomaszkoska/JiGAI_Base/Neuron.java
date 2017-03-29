@@ -17,16 +17,18 @@ public class Neuron implements Serializable{
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private double[] lastInput; //i believe that I will need that for backpropagation to work
 	private double[] weights;
 	private double bias;
 	ActivationFunctionBehaviour activationFunctionBehaviour;
-
+	protected double lastOutput;
+	protected double lastSignalError;
+	protected double lastBiasError;
 
 	public Neuron(int numberOfInputs){
 		this.weights = new double[numberOfInputs];
-		this.lastInput = new double[numberOfInputs];
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
+		this.lastSignalError = 0;
+		this.lastBiasError = 0;
 
 	}
 	public Neuron(double[] weights){
@@ -34,17 +36,17 @@ public class Neuron implements Serializable{
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
-		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
-
+		this.lastSignalError = 0;
+		this.lastBiasError = 0;
 	}
 
 	public Neuron(int numberOfInputs,
 			ActivationFunctionBehaviour activationFunctionBehaviour){
 		this.weights = new double[numberOfInputs];
-		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
-
+		this.lastSignalError = 0;
+		this.lastBiasError = 0;
 	}
 
 	public Neuron(double[] weights,
@@ -53,9 +55,9 @@ public class Neuron implements Serializable{
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
 		}
-		this.lastInput = new double[weights.length];
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
-
+		this.lastSignalError = 0;
+		this.lastBiasError = 0;
 	}
 
 	public double summingFunction(double[] inputValues){
@@ -92,8 +94,8 @@ public class Neuron implements Serializable{
 	}
 
 	public double processInput(double[] inputValues){
-		lastInput = inputValues;
-		return activationFunctionBehaviour.compute((summingFunction(inputValues)));
+		lastOutput = activationFunctionBehaviour.compute((summingFunction(inputValues)));
+		return lastOutput;
 	}
 
 	public void updateWeights(double biasInfo, double[] updatingInfo){
@@ -158,17 +160,29 @@ public class Neuron implements Serializable{
 		}
 	}
 
-	public double[] getLastInput() {
-		return lastInput;
-	}
-	public void setLastInput(double[] lastInput) {
-		this.lastInput = lastInput;
-	}
-
-	public void correctWeights(double errorTerm, double learningRate){
+	public void correctWeights(double[] corrections){
 		for (int i = 0; i < weights.length; i++) {
-			weights[i] = learningRate * errorTerm * lastInput[i];
+			//popraw TODO
+			weights[i] += corrections[i];
 		}
+	}
+	public double getLastOutput() {
+		return lastOutput;
+	}
+	public void setLastOutput(double lastOutput) {
+		this.lastOutput = lastOutput;
+	}
+	public double getLastSignalError() {
+		return lastSignalError;
+	}
+	public void setLastSignalError(double lastSignalError) {
+		this.lastSignalError = lastSignalError;
+	}
+	public double getLastBiasError() {
+		return lastBiasError;
+	}
+	public void setLastBiasError(double lastBiasError) {
+		this.lastBiasError = lastBiasError;
 	}
 
 }
