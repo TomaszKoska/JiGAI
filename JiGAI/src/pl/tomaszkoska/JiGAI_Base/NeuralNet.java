@@ -1,12 +1,15 @@
 package pl.tomaszkoska.JiGAI_Base;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
+import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
-import pl.tomaszkoska.JiGAI_Util.Helper;
+import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodHyperbolicTangent;
+import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodSigmoid;
+
 
 public class NeuralNet implements Serializable{
 
@@ -25,10 +28,7 @@ public class NeuralNet implements Serializable{
     protected String activationFunctionShortName;
 
 
-    private double learningRate;
-    private double learningRateDelta; // if decreasing, how big should the change be?
-    private double minLearningRate; //if decreasing, what is the minimum?
-    private double momentum;
+
 
 
 
@@ -51,11 +51,24 @@ public class NeuralNet implements Serializable{
             inputVariableCount = numberOfInputVariables;
         }
         activationFunctionShortName = "ht";
+        setLearningMethodBasedOnActivationFunctionName();
 
 
     }
 
-    public NeuralNet(int[] neuronCounts, int numberOfInputVariables, String activationFunctionShortName) {
+    private void setLearningMethodBasedOnActivationFunctionName() {
+    	if(this.getActivationFunctionShortName().toLowerCase().equals("bs")){
+			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
+		} else if(this.getActivationFunctionShortName().toLowerCase().equals("s")){
+			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
+		} else if(this.getActivationFunctionShortName().toLowerCase().equals("ht")){
+			this.setLearningMethod(new SupervisedLearningMethodHyperbolicTangent(this,0.05,0,0,0));
+		} else{
+			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
+		}
+	}
+
+	public NeuralNet(int[] neuronCounts, int numberOfInputVariables, String activationFunctionShortName) {
         if (neuronCounts.length < 1){
             System.out.println("we need at least one dimention!");
         }
@@ -68,7 +81,7 @@ public class NeuralNet implements Serializable{
             inputVariableCount = numberOfInputVariables;
         }
         this.activationFunctionShortName = activationFunctionShortName;
-
+        setLearningMethodBasedOnActivationFunctionName();
     }
 
 
@@ -76,6 +89,7 @@ public class NeuralNet implements Serializable{
         for (int i = 0; i < layers.length; i++) {
             layers[i].setActivationFunction(activationFunctionName);
         }
+        setLearningMethodBasedOnActivationFunctionName();
     }
 
     public void randomizeLayers(){
@@ -96,112 +110,10 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public void trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
-    	double[][] in = inputDataSet;
-    	double[][] tar = targetDataSet;
-    	if(shuffle){
-    		double[][] b = Helper.bindDataset(targetDataSet, inputDataSet);
-    		Helper.shuffleArray(b);
-    		tar = Helper.splitDataset(b, targetDataSet[0].length,true);
-    		in = Helper.splitDataset(b, targetDataSet[0].length,false);
-    	}
-
-    	for (int obs = 0; obs < targetDataSet.length; obs++) {	//for each observation
-    		trainOneObs(in[obs], tar[obs]);
-    	}
+    public double[] trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
+    	return learningMethod.trainOneEpoch(inputDataSet, targetDataSet, shuffle);
     }
 
-
-    public void trainOneObs(double[] inputData, double[] targetData){
-    	//TODO: some day please implement the learning algorithm
-    	//get one observation
-    	//full predict on it
-
-    	//for each neuron on last layer go like:
-    	//	calculate targetFunction: lastError = (realTarget-prediction)*prediction * (1-prediction)
-    	processInput(inputData);
-
-    	for (int i = 0; i < this.getOutputLayer().getNeurons().length; i++) {
-    		Neuron neu = this.getOutputLayer().getNeurons()[i];
-    		neu.setLastSignalError((targetData[i]-neu.getLastOutput())*neu.getLastOutput()*(1-neu.getLastOutput()));
-    	}
-
-    	//for each layer
-    	//	for each neuron
-    	//		take each neuron from the previous layer
-    	//			and go like:
-    	//				sumOfErrors = sumOfErrors + Layer[i+1].Node[k].Weight[j] * Layer[i+1].Node[k].SignalError;
-    	//				lastSignalError =  sumOfErrors * prediction * (1-prediction)
-
-    	for (int l = this.getLayers().length-2; l >= 0 ; l--) {//why i>0 and not i>=0?
-    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
-    			Neuron neu = this.getLayers()[l].getNeurons()[n];
-    			double errorSum = 0;
-    			for (int pn = 0; pn < this.getLayers()[l+1].getNeurons().length ; pn++) { //we check the errors on previous layer
-    				Neuron pneu = this.getLayers()[l+1].getNeurons()[pn];
-    				errorSum = errorSum + pneu.getWeights()[n] * pneu.getLastSignalError();
-    			}
-    			neu.setLastSignalError(errorSum*neu.getLastOutput()*(1-neu.getLastOutput()));
-    		}
-    	}
-
-
-
-    	//now all the neurons have their errors calculated
-
-
-    	for (int l = this.getLayers().length-1; l > 0; l--) {
-    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
-    			Neuron neu = this.getLayers()[l].getNeurons()[n];
-    			//update bias
-    			neu.setLastBiasError(
-    					this.getLearningRate()*neu.getLastSignalError()+
-    					this.getMomentum()*neu.getLastBiasError()
-    					);
-    			neu.setBias(neu.getBias()+neu.getLastBiasError());
-
-    			//update the rest of weights
-    			for (int w = 0; w < neu.getWeights().length; w++) {
-    				neu.setLastWeightDiff(w,
-    						this.getLearningRate()*
-    						neu.getLastSignalError()*
-    						getLayers()[l-1].getNeurons()[w].getLastOutput()
-    						+ this.getMomentum()*neu.getLastWeightDiff(w)
-    						);
-
-    				neu.setWeight(w,
-    						neu.getWeight(w)+neu.getLastWeightDiff(w)
-    						);
-    			}
-    		}
-    	}
-
-
-    	//and the first layer at last
-    	for (int n = 0; n < this.getLayers()[0].getNeurons().length ; n++) {
-			Neuron neu = this.getLayers()[0].getNeurons()[n];
-			//update bias
-			neu.setLastBiasError(
-					this.getLearningRate()*neu.getLastSignalError()+
-					this.getMomentum()*neu.getLastBiasError()
-					);
-			neu.setBias(neu.getBias()+neu.getLastBiasError());
-
-			//update the rest of weights
-			for (int w = 0; w < neu.getWeights().length; w++) {
-				neu.setLastWeightDiff(w,
-						this.getLearningRate()*
-						neu.getLastSignalError()*
-						inputData[w]
-						+ this.getMomentum()*neu.getLastWeightDiff(w)
-						);
-
-				neu.setWeight(w,
-						neu.getWeight(w)+neu.getLastWeightDiff(w)
-						);
-			}
-		}
-    }
 
 
     public double[][] predict(double[][] inputDataSet){
@@ -344,10 +256,6 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public void setLearningMethod(LearningMethod learningMethod) {
-        this.learningMethod = learningMethod;
-    }
-
     public String getActivationFunctionShortName() {
         return activationFunctionShortName;
     }
@@ -362,37 +270,10 @@ public class NeuralNet implements Serializable{
         }
     }
 
-	public double getLearningRate() {
-		return learningRate;
+	protected void setLearningMethod(LearningMethod learningMethod) {
+		this.learningMethod = learningMethod;
 	}
 
-	public void setLearningRate(double learningRate) {
-		this.learningRate = learningRate;
-	}
-
-	public double getMomentum() {
-		return momentum;
-	}
-
-	public void setMomentum(double momentum) {
-		this.momentum = momentum;
-	}
-
-	public double getLearningRateDelta() {
-		return learningRateDelta;
-	}
-
-	public void setLearningRateDelta(double learningRateDelta) {
-		this.learningRateDelta = learningRateDelta;
-	}
-
-	public double getMinLearningRate() {
-		return minLearningRate;
-	}
-
-	public void setMinLearningRate(double minLearningRate) {
-		this.minLearningRate = minLearningRate;
-	}
 
 
 

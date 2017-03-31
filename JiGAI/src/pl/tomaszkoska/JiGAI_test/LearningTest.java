@@ -1,7 +1,5 @@
 package pl.tomaszkoska.JiGAI_test;
-
 import pl.tomaszkoska.JiGAI_Base.NeuralNet;
-import pl.tomaszkoska.JiGAI_Util.Helper;
 
 
 public class LearningTest {
@@ -15,11 +13,11 @@ public class LearningTest {
 	public static void runTest(){
 		double[][] in = XORinput;
 		double[][] tar = XORtarget;
-		int[] architecture = new int[]{2,8,2};
+		int[] architecture = new int[]{2,2};
 		NeuralNet nn = new NeuralNet(architecture,in[0].length);
-		nn.setActivationFunction("s");
-		nn.setLearningRate(0.5);
-		nn.setMomentum(0);
+		nn.setActivationFunction("ht");
+		nn.getLearningMethod().setLearningRate(0.25);
+		nn.getLearningMethod().setMomentum(0);
 		nn.randomizeLayers();
 
 //		System.out.println(nn.weightsToString());
@@ -33,8 +31,9 @@ public class LearningTest {
 
 		System.out.println("\n\n\n\n");
 
-		for(int i=0;i<10;i++){
-		nn.trainOneEpoch(in, tar,true);
+		for(int i=0;i<10000;i++){
+		double[] x = nn.trainOneEpoch(in, tar,true);
+		System.out.println(x[0] + "  , " + x[1]);
 		}
 
 //		System.out.println(nn.weightsToString());

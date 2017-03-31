@@ -3,31 +3,72 @@ import pl.tomaszkoska.JiGAI_Base.NeuralNet;
 
 public abstract class LearningMethod {
 
-	protected double[][] trainSet;
-	protected double[][] testSet;
+
+    protected double learningRate;
+    protected double learningRateDelta; // if decreasing, how big should the change be?
+    protected double minLearningRate; //if decreasing, what is the minimum?
+    protected double momentum;
+
 	protected NeuralNet neuralNet;
 
-	public abstract double[] runNextEpoch();
-	//this function should return double[2]{RMSE train, RMSE test}
 
-	public double[][] getTestSet() {
-		return testSet;
+
+
+	public LearningMethod(NeuralNet neuralNet,double learningRate,
+			double learningRateDelta,
+			double minLearningRate,
+			double momentum) {
+		super();
+		this.learningRate = learningRate;
+		this.learningRateDelta = learningRateDelta;
+		this.minLearningRate = minLearningRate;
+		this.momentum = momentum;
+		this.neuralNet = neuralNet;
 	}
-	public void setTestSet(double[][] testSet) {
-		this.testSet = testSet;
-	}
-	public double[][] getTrainSet() {
-		return trainSet;
-	}
-	public void setTrainSet(double[][] trainSet) {
-		this.trainSet = trainSet;
-	}
+
 	public NeuralNet getNeuralNet() {
 		return neuralNet;
 	}
+
 	public void setNeuralNet(NeuralNet neuralNet) {
 		this.neuralNet = neuralNet;
 	}
+
+
+	public double getLearningRate() {
+		return learningRate;
+	}
+
+	public void setLearningRate(double learningRate) {
+		this.learningRate = learningRate;
+	}
+
+	public double getMomentum() {
+		return momentum;
+	}
+
+	public void setMomentum(double momentum) {
+		this.momentum = momentum;
+	}
+
+	public double getLearningRateDelta() {
+		return learningRateDelta;
+	}
+
+	public void setLearningRateDelta(double learningRateDelta) {
+		this.learningRateDelta = learningRateDelta;
+	}
+
+	public double getMinLearningRate() {
+		return minLearningRate;
+	}
+
+	public void setMinLearningRate(double minLearningRate) {
+		this.minLearningRate = minLearningRate;
+	}
+
+
+	public abstract double[] trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle);
 
 
 }
