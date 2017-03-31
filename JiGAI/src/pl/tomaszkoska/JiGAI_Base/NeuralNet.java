@@ -1,8 +1,12 @@
 package pl.tomaszkoska.JiGAI_Base;
 
 import java.io.Serializable;
+import java.util.Iterator;
+
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
 
 import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
+import pl.tomaszkoska.JiGAI_Util.Helper;
 
 public class NeuralNet implements Serializable{
 
@@ -22,6 +26,8 @@ public class NeuralNet implements Serializable{
 
 
     private double learningRate;
+    private double learningRateDelta; // if decreasing, how big should the change be?
+    private double minLearningRate; //if decreasing, what is the minimum?
     private double momentum;
 
 
@@ -40,11 +46,12 @@ public class NeuralNet implements Serializable{
             layers = new NeuralNetLayer[neuronCounts.length];
             layers[0] = new NeuralNetLayer(neuronCounts[0],numberOfInputVariables);
             for (int i = 1; i < layers.length; i++) {
-                layers[i] = new NeuralNetLayer(neuronCounts[i],layers[0]);
+                layers[i] = new NeuralNetLayer(neuronCounts[i],layers[i-1]);
             }
             inputVariableCount = numberOfInputVariables;
         }
         activationFunctionShortName = "ht";
+
 
     }
 
@@ -88,46 +95,112 @@ public class NeuralNet implements Serializable{
         return input;
     }
 
-    public void train(double[][] inputDataSet, double[][] targetDataSet){
-        //TODO: some day please implement the learning algorithm
-        //get one observation
-        //full predict on it
 
-        //for each neuron on last layer go like:
-        //	calculate targetFunction: lastError = (realTarget-prediction)*prediction * (1-prediction)
+    public void trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
+    	double[][] in = inputDataSet;
+    	double[][] tar = targetDataSet;
+    	if(shuffle){
+    		double[][] b = Helper.bindDataset(targetDataSet, inputDataSet);
+    		Helper.shuffleArray(b);
+    		tar = Helper.splitDataset(b, targetDataSet[0].length,true);
+    		in = Helper.splitDataset(b, targetDataSet[0].length,false);
+    	}
 
-        //for each layer
-        //	for each neuron
-        //		take each neuron from the previous layer
-        //			and go like:
-        //				sumOfErrors = sumOfErrors + Layer[i+1].Node[k].Weight[j] * Layer[i+1].Node[k].SignalError;
-        //				lastSignalError =  sumOfErrors * prediction * (1-prediction)
+    	for (int obs = 0; obs < targetDataSet.length; obs++) {	//for each observation
+    		trainOneObs(in[obs], tar[obs]);
+    	}
+    }
 
-        //now all the neurons have their errors calculated
 
-        /*For each layer
-        	for each neuron
-        		go like:
-        	ZROZUM TO TOMASZ:	Layer[i].Node[j].ThresholdDiff
-        		= LearningRate *
-        		Layer[i].Node[j].SignalError +
-        		Momentum*Layer[i].Node[j].ThresholdDiff;
-        	TOMASZ: rozumiesz to. Tu chodzi o to, ¿eby poprzednia "poprawka" zostala wzieta pod uwage
-        	"z rozpedu", to jest przecie¿ "impet" czyli "momentum"...
-    	 Dlatego zawsze zapisujemy poprzedni¹ wartoœc!!! Benc!
+    public void trainOneObs(double[] inputData, double[] targetData){
+    	//TODO: some day please implement the learning algorithm
+    	//get one observation
+    	//full predict on it
 
-    	 			for each weight:
-						Layer[i].Node[j].WeightDiff[k] =
-							LearningRate *
-							Layer[i].Node[j].SignalError*Layer[i-1].Node[k].Output +
-							Momentum*Layer[i].Node[j].WeightDiff[k];
+    	//for each neuron on last layer go like:
+    	//	calculate targetFunction: lastError = (realTarget-prediction)*prediction * (1-prediction)
+    	processInput(inputData);
 
-						// Update weight between node j and k
-						Layer[i].Node[j].Weight[k] =
-							Layer[i].Node[j].Weight[k] +
-							Layer[i].Node[j].WeightDiff[k];
-    	 */
+    	for (int i = 0; i < this.getOutputLayer().getNeurons().length; i++) {
+    		Neuron neu = this.getOutputLayer().getNeurons()[i];
+    		neu.setLastSignalError((targetData[i]-neu.getLastOutput())*neu.getLastOutput()*(1-neu.getLastOutput()));
+    	}
 
+    	//for each layer
+    	//	for each neuron
+    	//		take each neuron from the previous layer
+    	//			and go like:
+    	//				sumOfErrors = sumOfErrors + Layer[i+1].Node[k].Weight[j] * Layer[i+1].Node[k].SignalError;
+    	//				lastSignalError =  sumOfErrors * prediction * (1-prediction)
+
+    	for (int l = this.getLayers().length-2; l >= 0 ; l--) {//why i>0 and not i>=0?
+    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
+    			Neuron neu = this.getLayers()[l].getNeurons()[n];
+    			double errorSum = 0;
+    			for (int pn = 0; pn < this.getLayers()[l+1].getNeurons().length ; pn++) { //we check the errors on previous layer
+    				Neuron pneu = this.getLayers()[l+1].getNeurons()[pn];
+    				errorSum = errorSum + pneu.getWeights()[n] * pneu.getLastSignalError();
+    			}
+    			neu.setLastSignalError(errorSum*neu.getLastOutput()*(1-neu.getLastOutput()));
+    		}
+    	}
+
+
+
+    	//now all the neurons have their errors calculated
+
+
+    	for (int l = this.getLayers().length-1; l > 0; l--) {
+    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
+    			Neuron neu = this.getLayers()[l].getNeurons()[n];
+    			//update bias
+    			neu.setLastBiasError(
+    					this.getLearningRate()*neu.getLastSignalError()+
+    					this.getMomentum()*neu.getLastBiasError()
+    					);
+    			neu.setBias(neu.getBias()+neu.getLastBiasError());
+
+    			//update the rest of weights
+    			for (int w = 0; w < neu.getWeights().length; w++) {
+    				neu.setLastWeightDiff(w,
+    						this.getLearningRate()*
+    						neu.getLastSignalError()*
+    						getLayers()[l-1].getNeurons()[w].getLastOutput()
+    						+ this.getMomentum()*neu.getLastWeightDiff(w)
+    						);
+
+    				neu.setWeight(w,
+    						neu.getWeight(w)+neu.getLastWeightDiff(w)
+    						);
+    			}
+    		}
+    	}
+
+
+    	//and the first layer at last
+    	for (int n = 0; n < this.getLayers()[0].getNeurons().length ; n++) {
+			Neuron neu = this.getLayers()[0].getNeurons()[n];
+			//update bias
+			neu.setLastBiasError(
+					this.getLearningRate()*neu.getLastSignalError()+
+					this.getMomentum()*neu.getLastBiasError()
+					);
+			neu.setBias(neu.getBias()+neu.getLastBiasError());
+
+			//update the rest of weights
+			for (int w = 0; w < neu.getWeights().length; w++) {
+				neu.setLastWeightDiff(w,
+						this.getLearningRate()*
+						neu.getLastSignalError()*
+						inputData[w]
+						+ this.getMomentum()*neu.getLastWeightDiff(w)
+						);
+
+				neu.setWeight(w,
+						neu.getWeight(w)+neu.getLastWeightDiff(w)
+						);
+			}
+		}
     }
 
 
@@ -200,10 +273,20 @@ public class NeuralNet implements Serializable{
         return layers;
     }
 
+    public NeuralNetLayer getInputLayer() {
+        return layers[0];
+    }
+
+    public NeuralNetLayer getOutputLayer() {
+        return layers[layers.length-1];
+    }
+
 
     public void setLayers(NeuralNetLayer[] layers) {
         this.layers = layers;
     }
+
+
 
     public int getOutputNeuronsCount(){
         return this.layers[this.layers.length-1].getNeuronCount();
@@ -293,6 +376,22 @@ public class NeuralNet implements Serializable{
 
 	public void setMomentum(double momentum) {
 		this.momentum = momentum;
+	}
+
+	public double getLearningRateDelta() {
+		return learningRateDelta;
+	}
+
+	public void setLearningRateDelta(double learningRateDelta) {
+		this.learningRateDelta = learningRateDelta;
+	}
+
+	public double getMinLearningRate() {
+		return minLearningRate;
+	}
+
+	public void setMinLearningRate(double minLearningRate) {
+		this.minLearningRate = minLearningRate;
 	}
 
 

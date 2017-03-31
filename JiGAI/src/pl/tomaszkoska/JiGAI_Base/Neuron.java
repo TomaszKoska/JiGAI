@@ -13,15 +13,14 @@ import sun.misc.GC.LatencyRequest;
 public class Neuron implements Serializable{
 
 
-	/**
-	 *
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private double[] weights;
 	private double bias;
 	ActivationFunctionBehaviour activationFunctionBehaviour;
 	protected double lastOutput;
 	protected double lastSignalError;
+	private double[] lastWeightDiff;
 	protected double lastBiasError;
 
 	public Neuron(int numberOfInputs){
@@ -29,12 +28,15 @@ public class Neuron implements Serializable{
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 		this.lastSignalError = 0;
 		this.lastBiasError = 0;
+		this.lastWeightDiff = new double[numberOfInputs];
 
 	}
 	public Neuron(double[] weights){
 		this.weights = new double[weights.length];
+		this.lastWeightDiff = new double[weights.length];
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
+			this.lastWeightDiff[i] = 0;
 		}
 		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
 		this.lastSignalError = 0;
@@ -47,13 +49,16 @@ public class Neuron implements Serializable{
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
 		this.lastSignalError = 0;
 		this.lastBiasError = 0;
+		this.lastWeightDiff = new double[numberOfInputs];
 	}
 
 	public Neuron(double[] weights,
 		ActivationFunctionBehaviour activationFunctionBehaviour){
 		this.weights = new double[weights.length];
+		this.lastWeightDiff = new double[weights.length];
 		for (int i = 0; i < weights.length; i++) {
 			this.weights[i] = weights[i];
+			this.lastWeightDiff[i] = 0;
 		}
 		this.activationFunctionBehaviour = activationFunctionBehaviour;
 		this.lastSignalError = 0;
@@ -160,12 +165,8 @@ public class Neuron implements Serializable{
 		}
 	}
 
-	public void correctWeights(double[] corrections){
-		for (int i = 0; i < weights.length; i++) {
-			//popraw TODO
-			weights[i] += corrections[i];
-		}
-	}
+
+
 	public double getLastOutput() {
 		return lastOutput;
 	}
@@ -183,6 +184,27 @@ public class Neuron implements Serializable{
 	}
 	public void setLastBiasError(double lastBiasError) {
 		this.lastBiasError = lastBiasError;
+	}
+	public double[] getLastWeightDiff() {
+		return lastWeightDiff;
+	}
+
+	public void setLastWeightDiff(double[] lastWeightDiff) {
+		this.lastWeightDiff = lastWeightDiff;
+	}
+
+	public double getLastWeightDiff(int i) {
+		return lastWeightDiff[i];
+	}
+
+	public void setLastWeightDiff(int i, double lastWeightDiff) {
+		this.lastWeightDiff[i] = lastWeightDiff;
+	}
+	public void setWeight(int w, double d) {
+		this.weights[w] = d;
+	}
+	public double getWeight(int w) {
+		return this.weights[w];
 	}
 
 }

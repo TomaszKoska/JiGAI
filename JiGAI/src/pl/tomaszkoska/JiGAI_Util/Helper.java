@@ -3,11 +3,13 @@ package pl.tomaszkoska.JiGAI_Util;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.opencsv.CSVReader;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 public class Helper {
@@ -134,6 +136,31 @@ public class Helper {
 		return outcome;
 	}
 
+	public static double[][] bindDataset(double[][] set1, double[][] set2){
+		double[][] outcome = new double[set1.length][set1[0].length+set2[0].length];
 
+		for (int i = 0; i < outcome.length; i++) {
+			for (int j = 0; j < outcome[0].length; j++) {
+				if(j<set1[0].length){
+					outcome[i][j] = set1[i][j];
+				}else{
+					outcome[i][j] = set2[i][j-set1[0].length];
+				}
+			}
+		}
 
+		return outcome;
+	}
+	public static void shuffleArray(double[][] a) {
+	    Random random = new Random();
+
+	    for (int i = a.length - 1; i > 0; i--) {
+	    	int m = random.nextInt(i + 1);
+	        for (int j = a[i].length - 1; j > 0; j--) {
+	            double temp = a[i][j];
+	            a[i][j] = a[m][j];
+	            a[m][j] = temp;
+	        }
+	    }
+	}
 }

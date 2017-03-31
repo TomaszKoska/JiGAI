@@ -264,19 +264,19 @@ public class GeneticEngineTester {
 	public static double[][] inputDataSet2
 	= new double[][]{{1,1},{0,1},{1,0},{0,0}};
 
-			public static double[][] targetDataSet2 =new double[][]{{0},
-			{1},
-			{1},
-			{0}};
+			public static double[][] targetDataSet2 =new double[][]{{0,1},
+			{1,0},
+			{1,0},
+			{0,1}};
 
 
 
 	public static void runTest(){
 		//define class of nns
-		int numberOfInputs = inputDataSet[0].length;
-		int[] neuronCounts = new int[]{20,10,1};
+		int numberOfInputs = inputDataSet2[0].length;
+		int[] neuronCounts = new int[]{2,2,2};
 		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
-		ge.setSTART_POPULATION_SIZE(1000);
+		ge.setSTART_POPULATION_SIZE(5000);
 		ge.setMUTATION_RATE(0.1);
 //		ge.setKillingBehaviour(new FitnessAndAgeBasedChanceOfSurvival(ge));
 		ge.setKillingBehaviour(new TopSurvives(ge,10));
@@ -284,11 +284,11 @@ public class GeneticEngineTester {
 		ge.setReproductionBehaviour(new ReproductionBehaviour(ge));
 		ge.setMutationBehaviourName("rm");
 		ge.setInheritanceBehaviourName("ri");
-		ge.setActivationFunctionShortName("th");
+		ge.setActivationFunctionShortName("ht");
 
 
-//		ge.initialize();
-		ge.readFromCSV("D:\\test\\genetics\\tmp.csv");
+		ge.initialize();
+//		ge.readFromCSV("D:\\test\\genetics\\tmp.csv");
 
 //		for (int i = 0; i < ge.getPopulation().size(); i++) {
 //			System.out.println(ge.getPopulation().get(i).getGenomeString());
@@ -303,18 +303,19 @@ public class GeneticEngineTester {
 
 
 //
-		for (int i = 0; i < 2000; i++) {
-			ge.runNextTurn(inputDataSet, targetDataSet);
+		for (int i = 0; i < 1000; i++) {
+			ge.runNextTurn(inputDataSet2, targetDataSet2);
 			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
-			if(ge.getPopulation().get(0).getAge()>200){
+			if(ge.getPopulation().get(0).getAge()>2000){
 				break;
 			}
 		}
 
-		ge.saveInCSV("D:\\test\\genetics\\tmp.csv");
+		//ge.saveInCSV("D:\\test\\genetics\\tmp.csv");
 
 		for (int j = 0; j < ge.getPopulation().get(0).getPrediction().length; j++) {
-			System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]);
+			System.out.println("" + ge.getPopulation().get(0).getPrediction()[j][0]
+					+", " + ge.getPopulation().get(0).getPrediction()[j][1]);
 		}
 //		System.out.println("\n");
 //		System.out.println("\n");
