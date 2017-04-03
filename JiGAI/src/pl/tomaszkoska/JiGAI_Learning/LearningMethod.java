@@ -1,10 +1,16 @@
 package pl.tomaszkoska.JiGAI_Learning;
+import java.io.Serializable;
+
 import pl.tomaszkoska.JiGAI_Base.NeuralNet;
 
-public abstract class LearningMethod {
+public abstract class LearningMethod implements Serializable {
 
 
-    protected double learningRate;
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	protected double learningRate;
     protected double learningRateDelta; // if decreasing, how big should the change be?
     protected double minLearningRate; //if decreasing, what is the minimum?
     protected double momentum;

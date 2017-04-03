@@ -38,10 +38,15 @@ public class LearningTest {
 
 		System.out.println("\n\n\n\n");
 
+		System.out.println(nn.weightsToString());
+
 		for(int i=0;i<100;i++){
 		double[] x = nn.trainOneEpoch(in, tar,false);
-		System.out.println(x[0] + "  , " + x[1]);
+		System.out.println("rmses in training: " + x[0] + "  , " + x[1]);
 		}
+
+		System.out.println("\n\n\n\n");
+		System.out.println(nn.weightsToString());
 
 //		System.out.println(nn.weightsToString());
 		nn.fullPredict(in, tar);
@@ -60,10 +65,10 @@ public class LearningTest {
 		double[][] tar = XORtarget;
 		int[] architecture = new int[]{4,4,2};
 		NeuralNet nn = new NeuralNet(architecture,in[0].length);
-		nn.setActivationFunction("ht");
-		nn.getLearningMethod().setLearningRate(0.25);
-		nn.getLearningMethod().setMomentum(0);
 		nn.randomizeLayers();
+		nn.setActivationFunction("l");
+		nn.getLearningMethod().setLearningRate(0.0000005);
+		nn.getLearningMethod().setMomentum(0);
 
 //		System.out.println(nn.weightsToString());
 		nn.fullPredict(in, tar);

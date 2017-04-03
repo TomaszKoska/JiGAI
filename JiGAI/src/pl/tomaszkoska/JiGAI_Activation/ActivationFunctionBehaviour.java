@@ -6,8 +6,13 @@ package pl.tomaszkoska.JiGAI_Activation;
  *4-ht-hyperbolicTangent
  * */
 
+import java.io.Serializable;
 
-public abstract class ActivationFunctionBehaviour {
+public abstract class ActivationFunctionBehaviour  implements Serializable{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	protected String name;
 	protected String shortName;
 	public abstract double compute(double value);

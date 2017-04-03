@@ -8,6 +8,7 @@ import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
 import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodHyperbolicTangent;
+import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodLinear;
 import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodSigmoid;
 
 
@@ -64,7 +65,7 @@ public class NeuralNet implements Serializable{
 		} else if(this.getActivationFunctionShortName().toLowerCase().equals("ht")){
 			this.setLearningMethod(new SupervisedLearningMethodHyperbolicTangent(this,0.05,0,0,0));
 		} else{
-			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
+			this.setLearningMethod(new SupervisedLearningMethodLinear(this,0.05,0,0,0));
 		}
 	}
 
@@ -86,6 +87,7 @@ public class NeuralNet implements Serializable{
 
 
     public void setActivationFunction(String activationFunctionName){
+    	this.setActivationFunctionShortName(activationFunctionName);
         for (int i = 0; i < layers.length; i++) {
             layers[i].setActivationFunction(activationFunctionName);
         }
