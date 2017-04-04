@@ -23,9 +23,9 @@ public class SupervisedLearningMethodLinear extends LearningMethod {
 
     	for (int obs = 0; obs < targetDataSet.length; obs++) {	//for each observation
     		trainOneObs(in[obs], tar[obs]);
-    		System.out.println("\n");
-    		System.out.println(neuralNet.weightsToString());
-    		System.out.println("\n");
+//    		System.out.println("\n");
+//    		System.out.println(neuralNet.weightsToString());
+//    		System.out.println("\n");
     	}
     	neuralNet.fullPredict(inputDataSet, targetDataSet);
 

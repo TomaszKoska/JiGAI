@@ -53,7 +53,7 @@ public class ForecastingEngine {
 			nn.setActivationFunction(activation);
 			nn.getLearningMethod().setLearningRate(learningRate);
 			nn.getLearningMethod().setMomentum(momentum);
-			nn.randomizeLayers();
+			nn.randomizeLayers(-0.2,0.2);
 			nets.add(nn);
 //			System.out.println(nn.weightsToString());
 		}
@@ -73,7 +73,8 @@ public class ForecastingEngine {
 
 
 	public void trainNets(int iterations){
-
+		double thisRMSE=0;
+		double lastRMSE=999;
 		for (int n = 0; n < nets.size(); n++) {
 
 			NeuralNet nn = nets.get(n);
@@ -81,13 +82,44 @@ public class ForecastingEngine {
 			double [][] in = Helper.splitDataset(s, targetCount, false);
 			double [][] tar = Helper.splitDataset(s, targetCount, true);
 
+			int howManyTurning = 0;
+			lastRMSE = 999;
+			thisRMSE = 0;
 			for(int i=0;i<iterations;i++){
 //				Helper.printDataSet(tar);
 //				Helper.printDataSet(in);
 				double[] x = nn.trainOneEpoch(in,tar,true);
-				System.out.println("rmses in training: " + x[0]);
+				thisRMSE = 0;
+				for (int j = 0; j < x.length; j++) {
+					thisRMSE += x[j];
 				}
-				System.out.println("\n");
+				thisRMSE = thisRMSE/x.length;
+
+				if (thisRMSE > lastRMSE){
+					howManyTurning++;
+				}else{
+					howManyTurning=0;
+				}
+				lastRMSE = thisRMSE;
+				System.out.println("rmses in training: " + x[0]);
+
+				if(howManyTurning > 10 ){
+					System.out.println("Things turn!");
+					break;
+				}
+
+
+
+				}
+			System.out.println(n + " finished!" + thisRMSE);
+		}
+
+		Iterator<NeuralNet> n = nets.iterator();
+		while (n.hasNext()) {
+		   NeuralNet nn = n.next(); // must be called before you can call i.remove()
+		   if(Double.isNaN(thisRMSE)){
+			   n.remove();
+			}
 		}
 
 	}

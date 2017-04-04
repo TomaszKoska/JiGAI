@@ -24,21 +24,21 @@ public class JiGAIStarter {
 
 
 
-//		startNewForecasting();
-		loadNetsAndForecast();
+		startNewForecasting();
+//		loadNetsAndForecast();
 	}
 
 	public static void startNewForecasting(){
 		ForecastingEngine fe = new ForecastingEngine();
 		fe.loadData("D:\\test\\nn\\pkb_data.csv",12,1);
-		fe.makeNewNets(100, new int[]{4,4,1}, "ht", 0.0001, 0);
+		fe.makeNewNets(1, new int[]{1}, "l", 0.0000001,0);
 		fe.makeSubsampleForEachNet();
 		System.out.println("Data basic info:");
 		System.out.println(fe.getFullData().length);
 		System.out.println(fe.getFullData()[0].length);
 		System.out.println("targets: " + fe.targetCount + "  inputs: " + fe.inputCount);
 
-		fe.trainNets(10000);
+		fe.trainNets(10000000);
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
 		Date date = new Date();

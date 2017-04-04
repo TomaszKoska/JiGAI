@@ -99,6 +99,11 @@ public class NeuralNet implements Serializable{
             layers[i].randomize(-1,1);
         }
     }
+    public void randomizeLayers(double min, double max){
+        for (int i = 0; i < layers.length; i++) {
+            layers[i].randomize(min,max);
+        }
+    }
 
 
     public double[] processInput(double[] inputValues){
@@ -127,6 +132,7 @@ public class NeuralNet implements Serializable{
 
         double[][] outcome = new double[inputDataSet.length][this.getOutputNeuronsCount()];
         double[] dataRow = new double[inputVariableCount];
+
         for (int i = 0; i < inputDataSet.length; i++) {
             for (int j = 0; j < inputVariableCount; j++) {
                 dataRow[j] = inputDataSet[i][j];

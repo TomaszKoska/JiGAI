@@ -81,7 +81,7 @@ public class Neuron implements Serializable{
 			e.printStackTrace();
 		}
 
-		return sum+bias;
+		return (sum+bias);
 	}
 
 	public void randomizeWeights(){
