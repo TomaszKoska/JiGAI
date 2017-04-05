@@ -17,14 +17,13 @@ public class LearningTest {
 	public static double[][] basic3target =
 			new double[][]{{1,1,1},{1,1,0},{1,0,1},{0,1,1},{1,0,0},{0,1,0},{0,0,1},{0,0,0}};
 
-	public static void runTest2(){
+	public static void runTest(){
 		double[][] in = basic3Input;
 		double[][] tar = basic3target;
-		int[] architecture = new int[]{10,10,3};
+		int[] architecture = new int[]{10,3};
 		NeuralNet nn = new NeuralNet(architecture,in[0].length);
-		nn.setActivationFunction("ht");
-		nn.getLearningMethod().setLearningRate(0.1);
-		nn.getLearningMethod().setMomentum(0);
+		nn.setActivationFunction("s");
+		nn.getLearningSpecifiaction().setLearningRate(0.0001);
 		nn.randomizeLayers();
 
 //		System.out.println(nn.weightsToString());
@@ -40,9 +39,9 @@ public class LearningTest {
 
 		System.out.println(nn.weightsToString());
 
-		for(int i=0;i<100;i++){
-		double[] x = nn.trainOneEpoch(in, tar,false);
-		System.out.println("rmses in training: " + x[0] + "  , " + x[1]);
+		for(int i=0;i<10000;i++){
+		double[] x = nn.trainOneEpochSupervised(in, tar,false);
+		System.out.println("rmses in training: " + x[0] + "  , " + x[1]+ "  , " + x[2]);
 		}
 
 		System.out.println("\n\n\n\n");
@@ -60,15 +59,15 @@ public class LearningTest {
 		}
 	}
 
-	public static void runTest(){
+	public static void runTest2(){
 		double[][] in = XORinput;
 		double[][] tar = XORtarget;
 		int[] architecture = new int[]{4,4,2};
 		NeuralNet nn = new NeuralNet(architecture,in[0].length);
 		nn.randomizeLayers();
-		nn.setActivationFunction("l");
-		nn.getLearningMethod().setLearningRate(0.0000005);
-		nn.getLearningMethod().setMomentum(0);
+		nn.getLearningSpecifiaction().setLearningRate(0.01);
+		nn.setActivationFunction("ht");
+
 
 //		System.out.println(nn.weightsToString());
 		nn.fullPredict(in, tar);
@@ -81,8 +80,8 @@ public class LearningTest {
 
 		System.out.println("\n\n\n\n");
 
-		for(int i=0;i<10000;i++){
-		double[] x = nn.trainOneEpoch(in, tar,true);
+		for(int i=0;i<100000;i++){
+		double[] x = nn.trainOneEpochSupervised(in, tar,true);
 		System.out.println(x[0] + "  , " + x[1]);
 		}
 

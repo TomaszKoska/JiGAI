@@ -7,7 +7,7 @@ public class NeuronTester {
 
 	public static void runTest(){
 		Neuron testNeuron = new Neuron(5);
-		testNeuron.setActivationFunctionBehaviour(new SigmoidActivationFunction(1));
+		testNeuron.setActivationFunctionBehaviour(new SigmoidActivationFunction());
 		testNeuron.randomizeWeights(-1,1);
 
 		System.out.println(testNeuron);

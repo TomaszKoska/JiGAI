@@ -2,14 +2,10 @@ package pl.tomaszkoska.JiGAI_Base;
 
 import java.io.Serializable;
 
-import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
-import pl.tomaszkoska.JiGAI_Learning.LearningMethod;
-import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodHyperbolicTangent;
-import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodLinear;
-import pl.tomaszkoska.JiGAI_Learning.SupervisedLearningMethodSigmoid;
+import pl.tomaszkoska.JiGAI_Util.Helper;
 
 
 public class NeuralNet implements Serializable{
@@ -19,17 +15,14 @@ public class NeuralNet implements Serializable{
      */
     private static final long serialVersionUID = 1L;
 
-    protected LearningMethod learningMethod;
+    protected LearningSpecification learningSpecifiaction;
 
-    protected NeuralNetLayer[] layers;
+	protected NeuralNetLayer[] layers;
     protected int inputVariableCount;
 
     protected double[][] prediction; //last calculated prediction
     protected double[][] error; // last calculated error
     protected String activationFunctionShortName;
-
-
-
 
 
 
@@ -52,22 +45,8 @@ public class NeuralNet implements Serializable{
             inputVariableCount = numberOfInputVariables;
         }
         activationFunctionShortName = "ht";
-        setLearningMethodBasedOnActivationFunctionName();
-
-
+        learningSpecifiaction = new LearningSpecification(0.0001,0,0,0);
     }
-
-    private void setLearningMethodBasedOnActivationFunctionName() {
-    	if(this.getActivationFunctionShortName().toLowerCase().equals("bs")){
-			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
-		} else if(this.getActivationFunctionShortName().toLowerCase().equals("s")){
-			this.setLearningMethod(new SupervisedLearningMethodSigmoid(this,0.05,0,0,0));
-		} else if(this.getActivationFunctionShortName().toLowerCase().equals("ht")){
-			this.setLearningMethod(new SupervisedLearningMethodHyperbolicTangent(this,0.05,0,0,0));
-		} else{
-			this.setLearningMethod(new SupervisedLearningMethodLinear(this,0.05,0,0,0));
-		}
-	}
 
 	public NeuralNet(int[] neuronCounts, int numberOfInputVariables, String activationFunctionShortName) {
         if (neuronCounts.length < 1){
@@ -82,7 +61,7 @@ public class NeuralNet implements Serializable{
             inputVariableCount = numberOfInputVariables;
         }
         this.activationFunctionShortName = activationFunctionShortName;
-        setLearningMethodBasedOnActivationFunctionName();
+        learningSpecifiaction = new LearningSpecification(0.0001,0,0,0);
     }
 
 
@@ -91,7 +70,6 @@ public class NeuralNet implements Serializable{
         for (int i = 0; i < layers.length; i++) {
             layers[i].setActivationFunction(activationFunctionName);
         }
-        setLearningMethodBasedOnActivationFunctionName();
     }
 
     public void randomizeLayers(){
@@ -117,9 +95,103 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public double[] trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
-    	return learningMethod.trainOneEpoch(inputDataSet, targetDataSet, shuffle);
+    public double[] trainOneEpochSupervised(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
+    	double[][] in = inputDataSet;
+    	double[][] tar = targetDataSet;
+
+    	if(shuffle){
+    		double[][] b = Helper.bindDataset(targetDataSet, inputDataSet);
+    		Helper.shuffleArray(b);
+    		tar = Helper.splitDataset(b, targetDataSet[0].length,true);
+    		in = Helper.splitDataset(b, targetDataSet[0].length,false);
+    	}
+
+    	for (int obs = 0; obs < targetDataSet.length; obs++) {	//for each observation
+    		trainOneObsSupervised(in[obs], tar[obs]);
+    	}
+    	this.fullPredict(inputDataSet, targetDataSet);
+
+    	return this.getRMSE();
     }
+
+
+    public void trainOneObsSupervised(double[] inputData, double[] targetData){
+
+    	this.processInput(inputData);
+    	for (int i = 0; i < this.getOutputLayer().getNeurons().length; i++) {
+    		Neuron neu = this.getOutputLayer().getNeurons()[i];
+    		neu.calculateLastSignalError((targetData[i]-neu.getLastOutput()));
+    	}
+
+
+    	for (int l = this.getLayers().length-2; l >= 0 ; l--) {
+    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
+    			Neuron neu = this.getLayers()[l].getNeurons()[n];
+    			double errorSum = 0;
+    			for (int pn = 0; pn < this.getLayers()[l+1].getNeurons().length ; pn++) { //we check the errors on previous layer
+    				Neuron pneu = this.getLayers()[l+1].getNeurons()[pn];
+    				errorSum = errorSum + pneu.getWeights()[n] * pneu.getLastSignalError();
+    			}
+    			neu.calculateLastSignalError(errorSum);
+    		}
+    	}
+
+    	//now all the neurons have their errors calculated
+
+    	for (int l = this.getLayers().length-1; l > 0; l--) {
+    		for (int n = 0; n < this.getLayers()[l].getNeurons().length ; n++) {
+    			Neuron neu = this.getLayers()[l].getNeurons()[n];
+    			//update bias
+    			neu.setLastBiasError(
+    					learningSpecifiaction.getLearningRate()*neu.getLastSignalError()+
+    					learningSpecifiaction.getMomentum()*neu.getLastBiasError()
+    					);
+    			neu.setBias(neu.getBias()+neu.getLastBiasError());
+
+    			//update the rest of weights
+    			for (int w = 0; w < neu.getWeights().length; w++) {
+    				neu.setLastWeightDiff(w,
+    						learningSpecifiaction.getLearningRate()*
+    						neu.getLastSignalError()*
+    						this.getLayers()[l-1].getNeurons()[w].getLastOutput()
+    						+ learningSpecifiaction.getMomentum()*neu.getLastWeightDiff(w)
+    						);
+
+    				neu.setWeight(w,
+    						neu.getWeight(w)+neu.getLastWeightDiff(w)
+    						);
+    			}
+    		}
+    	}
+
+
+    	//and the first layer at last
+    	for (int n = 0; n < this.getLayers()[0].getNeurons().length ; n++) {
+			Neuron neu = this.getLayers()[0].getNeurons()[n];
+			//update bias
+			neu.setLastBiasError(
+					learningSpecifiaction.getLearningRate()*neu.getLastSignalError()+
+					learningSpecifiaction.getMomentum()*neu.getLastBiasError()
+					);
+			neu.setBias(neu.getBias()+neu.getLastBiasError());
+
+			//update the rest of weights
+			for (int w = 0; w < neu.getWeights().length; w++) {
+				neu.setLastWeightDiff(w,
+						learningSpecifiaction.getLearningRate()*
+						neu.getLastSignalError()*
+						inputData[w]
+						+ learningSpecifiaction.getMomentum()*neu.getLastWeightDiff(w)
+						);
+
+				neu.setWeight(w,
+						neu.getWeight(w)+neu.getLastWeightDiff(w)
+						);
+			}
+		}
+    }
+
+
 
 
 
@@ -259,9 +331,6 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public LearningMethod getLearningMethod() {
-        return learningMethod;
-    }
 
 
     public String getActivationFunctionShortName() {
@@ -278,11 +347,12 @@ public class NeuralNet implements Serializable{
         }
     }
 
-	protected void setLearningMethod(LearningMethod learningMethod) {
-		this.learningMethod = learningMethod;
+    public LearningSpecification getLearningSpecifiaction() {
+		return learningSpecifiaction;
 	}
 
-
-
+	public void setLearningSpecifiaction(LearningSpecification learningSpecifiaction) {
+		this.learningSpecifiaction = learningSpecifiaction;
+	}
 
 }

@@ -13,4 +13,10 @@ public class HyperbolicTangentActivationFunction extends ActivationFunctionBehav
 		return (Math.exp(value)-Math.exp(-value))/(Math.exp(value)+Math.exp(-value));
 	}
 
+	@Override
+	public double derivative(double x){
+		return (1-x*x);
+	}
+
+
 }

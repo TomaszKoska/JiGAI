@@ -1,45 +1,22 @@
-package pl.tomaszkoska.JiGAI_Learning;
-import java.io.Serializable;
+package pl.tomaszkoska.JiGAI_Base;
 
-import pl.tomaszkoska.JiGAI_Base.NeuralNet;
-
-public abstract class LearningMethod implements Serializable {
-
-
-    /**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+public class LearningSpecification {
 	protected double learningRate;
     protected double learningRateDelta; // if decreasing, how big should the change be?
     protected double minLearningRate; //if decreasing, what is the minimum?
     protected double momentum;
 
-	protected NeuralNet neuralNet;
 
 
 
-
-	public LearningMethod(NeuralNet neuralNet,double learningRate,
-			double learningRateDelta,
-			double minLearningRate,
+    public LearningSpecification(double learningRate, double learningRateDelta, double minLearningRate,
 			double momentum) {
 		super();
 		this.learningRate = learningRate;
 		this.learningRateDelta = learningRateDelta;
 		this.minLearningRate = minLearningRate;
 		this.momentum = momentum;
-		this.neuralNet = neuralNet;
 	}
-
-	public NeuralNet getNeuralNet() {
-		return neuralNet;
-	}
-
-	public void setNeuralNet(NeuralNet neuralNet) {
-		this.neuralNet = neuralNet;
-	}
-
 
 	public double getLearningRate() {
 		return learningRate;
@@ -72,9 +49,5 @@ public abstract class LearningMethod implements Serializable {
 	public void setMinLearningRate(double minLearningRate) {
 		this.minLearningRate = minLearningRate;
 	}
-
-
-	public abstract double[] trainOneEpoch(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle);
-
 
 }

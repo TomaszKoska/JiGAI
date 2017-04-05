@@ -18,27 +18,27 @@ public class JiGAIStarter {
 //		GeneticEngineTester.runTest3();
 //		GeneticEngineTester.runTest4();
 //		HelperTester.runTest();
-//		LearningTest.runTest();
+		LearningTest.runTest();
 //		SaveLoadTester.runTest();
 //		SaveLoadTester.runTest2();
 
 
 
-		startNewForecasting();
+//		startNewForecasting();
 //		loadNetsAndForecast();
 	}
 
 	public static void startNewForecasting(){
 		ForecastingEngine fe = new ForecastingEngine();
 		fe.loadData("D:\\test\\nn\\pkb_data.csv",12,1);
-		fe.makeNewNets(1, new int[]{1}, "l", 0.0000001,0);
+		fe.makeNewNets(100, new int[]{5,1}, "th", 0.0000001,0);
 		fe.makeSubsampleForEachNet();
 		System.out.println("Data basic info:");
 		System.out.println(fe.getFullData().length);
 		System.out.println(fe.getFullData()[0].length);
 		System.out.println("targets: " + fe.targetCount + "  inputs: " + fe.inputCount);
 
-		fe.trainNets(10000000);
+		fe.trainNets(10000000,15);
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
 		Date date = new Date();
@@ -48,6 +48,7 @@ public class JiGAIStarter {
 					"D:\\test\\nn\\subamples.ser");
 		fe.saveNets("D:\\test\\nn\\nets" + timeForFileName + ".ser",
 					"D:\\test\\nn\\subamples" + timeForFileName + ".ser");
+		fe.saveForecastsToCSV("D:\\test\\nn\\");
 
 	}
 	public static void loadNetsAndForecast(){

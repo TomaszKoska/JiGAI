@@ -4,7 +4,7 @@ package pl.tomaszkoska.JiGAI_Base;
 
 import java.io.Serializable;
 
-import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
+
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;

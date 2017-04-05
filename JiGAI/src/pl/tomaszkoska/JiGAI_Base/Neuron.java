@@ -3,12 +3,11 @@ package pl.tomaszkoska.JiGAI_Base;
 import java.io.Serializable;
 
 import pl.tomaszkoska.JiGAI_Activation.ActivationFunctionBehaviour;
-import pl.tomaszkoska.JiGAI_Activation.BinarySigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Exceptions.MyException;
-import sun.misc.GC.LatencyRequest;
+
 
 public class Neuron implements Serializable{
 
@@ -25,7 +24,7 @@ public class Neuron implements Serializable{
 
 	public Neuron(int numberOfInputs){
 		this.weights = new double[numberOfInputs];
-		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
+		this.activationFunctionBehaviour = new SigmoidActivationFunction();
 		this.lastSignalError = 0;
 		this.lastBiasError = 0;
 		this.lastWeightDiff = new double[numberOfInputs];
@@ -38,7 +37,7 @@ public class Neuron implements Serializable{
 			this.weights[i] = weights[i];
 			this.lastWeightDiff[i] = 0;
 		}
-		this.activationFunctionBehaviour = new SigmoidActivationFunction(1);
+		this.activationFunctionBehaviour = new SigmoidActivationFunction();
 		this.lastSignalError = 0;
 		this.lastBiasError = 0;
 	}
@@ -154,18 +153,14 @@ public class Neuron implements Serializable{
 
 
 	public void setActivationFunction(String name){
-		if(name.toLowerCase().equals("bs")){
-			this.setActivationFunctionBehaviour(new BinarySigmoidActivationFunction(1,0.5));
-		} else if(name.toLowerCase().equals("s")){
-			this.setActivationFunctionBehaviour(new SigmoidActivationFunction(1));
+		if(name.toLowerCase().equals("s")){
+			this.setActivationFunctionBehaviour(new SigmoidActivationFunction());
 		} else if(name.toLowerCase().equals("ht")){
 			this.setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
 		} else{
 			this.setActivationFunctionBehaviour(new LinearActivationFunction());
 		}
 	}
-
-
 
 	public double getLastOutput() {
 		return lastOutput;
@@ -205,6 +200,9 @@ public class Neuron implements Serializable{
 	}
 	public double getWeight(int w) {
 		return this.weights[w];
+	}
+	public void calculateLastSignalError(double errorSum) {
+		setLastSignalError(errorSum*activationFunctionBehaviour.derivative(this.getLastOutput()));
 	}
 
 }

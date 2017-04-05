@@ -11,7 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import pl.tomaszkoska.JiGAI_Base.NeuralNet;
@@ -51,8 +54,8 @@ public class ForecastingEngine {
 		for (int i = 0; i < howManyNewNets; i++) {
 			NeuralNet nn = new NeuralNet(architecture,inputCount);
 			nn.setActivationFunction(activation);
-			nn.getLearningMethod().setLearningRate(learningRate);
-			nn.getLearningMethod().setMomentum(momentum);
+			nn.getLearningSpecifiaction().setLearningRate(learningRate);
+			nn.getLearningSpecifiaction().setMomentum(momentum);
 			nn.randomizeLayers(-0.2,0.2);
 			nets.add(nn);
 //			System.out.println(nn.weightsToString());
@@ -72,7 +75,7 @@ public class ForecastingEngine {
 
 
 
-	public void trainNets(int iterations){
+	public void trainNets(int iterations, int maxTurning){
 		double thisRMSE=0;
 		double lastRMSE=999;
 		for (int n = 0; n < nets.size(); n++) {
@@ -88,7 +91,7 @@ public class ForecastingEngine {
 			for(int i=0;i<iterations;i++){
 //				Helper.printDataSet(tar);
 //				Helper.printDataSet(in);
-				double[] x = nn.trainOneEpoch(in,tar,true);
+				double[] x = nn.trainOneEpochSupervised(in,tar,true);
 				thisRMSE = 0;
 				for (int j = 0; j < x.length; j++) {
 					thisRMSE += x[j];
@@ -101,9 +104,9 @@ public class ForecastingEngine {
 					howManyTurning=0;
 				}
 				lastRMSE = thisRMSE;
-				System.out.println("rmses in training: " + x[0]);
+//				System.out.println("net: " + n + ", rmses in training: " + x[0]);
 
-				if(howManyTurning > 10 ){
+				if(howManyTurning > maxTurning ){
 					System.out.println("Things turn!");
 					break;
 				}
@@ -248,6 +251,24 @@ public class ForecastingEngine {
 		}
 
 		return avg;
+	}
+
+	public void saveForecastsToCSV(String directoryWithSlash){
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		Date date = new Date();
+		String timeForFileName = dateFormat.format(date);
+
+		double[][] forecastSet = new double[nets.get(0).getPrediction().length][nets.size()];
+
+			for (int i = 0; i < nets.get(0).getPrediction()[0].length; i++) {
+				String fileName = timeForFileName + "_" +  i;
+				for (int n = 0; n < nets.size(); n++) {
+					for (int p = 0; p < nets.get(0).getPrediction().length; p++) {
+						forecastSet[p][n] = nets.get(n).getPrediction()[p][i];
+					}
+				}
+				Helper.saveAsCSV(forecastSet, ( directoryWithSlash + fileName + ".csv"));
+			}
 	}
 
 

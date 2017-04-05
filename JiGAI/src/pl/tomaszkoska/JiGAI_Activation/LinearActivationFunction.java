@@ -12,4 +12,9 @@ public class LinearActivationFunction extends ActivationFunctionBehaviour{
 		return value;
 	}
 
+	@Override
+	public double derivative(double x){
+		return (x);
+	}
+
 }

@@ -31,8 +31,8 @@ public class SaveLoadTester {
 		NeuralNet nn = new NeuralNet(architecture,in[0].length);
 		nn.randomizeLayers();
 		nn.setActivationFunction("ht");
-		nn.getLearningMethod().setLearningRate(0.05);
-		nn.getLearningMethod().setMomentum(0);
+		nn.getLearningSpecifiaction().setLearningRate(0.05);
+		nn.getLearningSpecifiaction().setMomentum(0);
 
 		System.out.println(nn.weightsToString());
 		 		try (

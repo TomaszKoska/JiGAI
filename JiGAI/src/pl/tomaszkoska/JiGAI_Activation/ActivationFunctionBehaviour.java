@@ -24,4 +24,8 @@ public abstract class ActivationFunctionBehaviour  implements Serializable{
 		return shortName;
 	}
 
+	public double derivative(double x){
+		return (1-x*x);
+	}
+
 }

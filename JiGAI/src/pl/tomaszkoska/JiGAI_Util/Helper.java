@@ -1,6 +1,7 @@
 package pl.tomaszkoska.JiGAI_Util;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
@@ -162,5 +164,25 @@ public class Helper {
 	            a[m][j] = temp;
 	        }
 	    }
+	}
+
+
+	public static void saveAsCSV(double[][] a, String csvPath){
+		CSVWriter writer;
+		try {
+			writer = new CSVWriter(new FileWriter(csvPath), ',');
+
+			for (int i = 0; i < a.length; i++) {
+				String[] entries = new String[a[0].length];
+				for (int j = 0; j < a[0].length; j++) {
+				entries[j] = Double.toString(a[i][j]);
+				}
+				writer.writeNext(entries);
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
