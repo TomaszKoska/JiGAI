@@ -1,6 +1,7 @@
 package pl.tomaszkoska.JiGAI_test;
 
 import pl.tomaszkoska.JiGAI_Base.NeuralNet;
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 
 public class NeuralNetTester {
 
@@ -35,7 +36,8 @@ public class NeuralNetTester {
 				  { 1 },
 			      { -1 }
 				};
-			nn.fullPredict(dataSet,targetSet);
+			Dataset d = new Dataset(targetSet,dataSet);
+			nn.fullPredict(d);
 
 
 		System.out.println(nn.weightsToString());

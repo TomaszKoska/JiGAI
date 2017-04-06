@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import pl.tomaszkoska.JiGAI_Base.NeuralNet;
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 import pl.tomaszkoska.JiGAI_Util.Helper;
 
 public class ForecastingEngine {
@@ -67,7 +68,7 @@ public class ForecastingEngine {
 	public void makeSubsampleForEachNet(){
 
 		for (int n = 0; n < nets.size(); n++) {
-			double [][] subsample = Helper.getSubset(fullData, fullData.length);
+			double [][] subsample = Helper.getSubset(fullData, fullData.length, true);
 			subsamples.add(subsample);
 		}
 
@@ -84,6 +85,7 @@ public class ForecastingEngine {
 			double[][] s = subsamples.get(n);
 			double [][] in = Helper.splitDataset(s, targetCount, false);
 			double [][] tar = Helper.splitDataset(s, targetCount, true);
+			Dataset d = new Dataset(tar,in);
 
 			int howManyTurning = 0;
 			lastRMSE = 999;
@@ -91,7 +93,7 @@ public class ForecastingEngine {
 			for(int i=0;i<iterations;i++){
 //				Helper.printDataSet(tar);
 //				Helper.printDataSet(in);
-				double[] x = nn.trainOneEpochSupervised(in,tar,true);
+				double[] x = nn.trainOneEpochSupervised(d,true);
 				thisRMSE = 0;
 				for (int j = 0; j < x.length; j++) {
 					thisRMSE += x[j];
@@ -101,10 +103,11 @@ public class ForecastingEngine {
 				if (thisRMSE > lastRMSE){
 					howManyTurning++;
 				}else{
-					howManyTurning=0;
+					howManyTurning--;
+					if(howManyTurning<0){howManyTurning=0;}
 				}
 				lastRMSE = thisRMSE;
-//				System.out.println("net: " + n + ", rmses in training: " + x[0]);
+				System.out.println("net: " + n + ", rmses in training: " + x[0]);
 
 				if(howManyTurning > maxTurning ){
 					System.out.println("Things turn!");

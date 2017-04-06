@@ -8,6 +8,7 @@ import java.io.Serializable;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 import pl.tomaszkoska.JiGAI_InheritanceBehaviours.InheritanceBehaviour;
 import pl.tomaszkoska.JiGAI_InheritanceBehaviours.RandomInheritance;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.KillingBehaviour;
@@ -171,9 +172,9 @@ public class GeneticNeuralNet
 		return fit;
 	}
 
-	public double calculateFitness(double[][] inputDataSet, double[][] targetDataSet){
+	public double calculateFitness(Dataset d){
 
-		this.fullPredict(inputDataSet, targetDataSet);
+		this.fullPredict(d);
 
 		double[] rmses = this.getRMSE();
 		double fit = 0;

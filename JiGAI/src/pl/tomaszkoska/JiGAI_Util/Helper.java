@@ -72,13 +72,23 @@ public class Helper {
 	}
 
 
-	public static double[][] getSubset(double[][] source, int rows){
+	public static double[][] getSubset(double[][] source, int rows, boolean repetition){
+
 		double[][] subset = new double[rows][source[0].length];
 
-		for (int i = 0; i < subset.length; i++) {
-			int randomNum = ThreadLocalRandom.current().nextInt(0, source.length);
-			for (int j = 0; j < subset[i].length; j++) {
-				subset[i][j] = source[randomNum][j];
+		if(repetition){
+			for (int i = 0; i < subset.length; i++) {
+				int randomNum = ThreadLocalRandom.current().nextInt(0, source.length);
+				for (int j = 0; j < subset[i].length; j++) {
+					subset[i][j] = source[randomNum][j];
+				}
+			}
+		}else{
+			shuffleArray(source);
+			for (int i = 0; i < subset.length; i++) {
+				for (int j = 0; j < subset[i].length; j++) {
+					subset[i][j] = source[i][j];
+				}
 			}
 		}
 		return subset;

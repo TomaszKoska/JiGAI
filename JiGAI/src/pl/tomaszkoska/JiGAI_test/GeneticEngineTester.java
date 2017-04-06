@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import pl.tomaszkoska.JiGAI_Base.GeneticEngine;
 import pl.tomaszkoska.JiGAI_Base.GeneticNeuralNet;
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.DecreasingChanceOfSurvival;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.FitnessAndAgeBasedChanceOfSurvival;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.FitnessBasedChanceOfSurvival;
@@ -273,6 +274,7 @@ public class GeneticEngineTester {
 
 	public static void runTest(){
 		//define class of nns
+		Dataset d = new Dataset(targetDataSet2,inputDataSet2);
 		int numberOfInputs = inputDataSet2[0].length;
 		int[] neuronCounts = new int[]{2,2,2};
 		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
@@ -304,7 +306,7 @@ public class GeneticEngineTester {
 
 //
 		for (int i = 0; i < 1000; i++) {
-			ge.runNextTurn(inputDataSet2, targetDataSet2);
+			ge.runNextTurn(d);
 			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
 			if(ge.getPopulation().get(0).getAge()>2000){
 				break;
@@ -340,7 +342,8 @@ public class GeneticEngineTester {
 		gnn.getLayers()[0].getNeurons()[1].setWeights(new double[]{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1});
 		gnn.getLayers()[1].getNeurons()[0].setWeights(new double[]{1,1});
 
-		gnn.fullPredict(inputDataSet, targetDataSet);
+		Dataset d = new Dataset(inputDataSet, targetDataSet);
+		gnn.fullPredict(d);
 //
 		System.out.println(gnn);
 		System.out.println(gnn.weightsToString());
@@ -358,6 +361,7 @@ public class GeneticEngineTester {
 		inputDataSet = Helper.loadDataFromCSV("D:\\test\\genetics\\input\\input_cpi.csv");
 		targetDataSet = Helper.loadDataFromCSV("D:\\test\\genetics\\input\\target_cpi.csv");
 
+		Dataset d = new Dataset(targetDataSet,inputDataSet);
 		int numberOfInputs = inputDataSet[0].length;
 		int[] neuronCounts = new int[]{5,5,1};
 		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
@@ -384,7 +388,7 @@ public class GeneticEngineTester {
 
 
 		for (int i = 0; i < 500; i++) {
-			ge.runNextTurn(inputDataSet, targetDataSet);
+			ge.runNextTurn(d);
 			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
 			if(ge.getPopulation().get(0).getAge()>1000){
 				break;
@@ -404,64 +408,4 @@ public class GeneticEngineTester {
 	}
 
 
-
-	public static void runTest4(){
-		//define class of nns
-		double[][] dataSet = Helper.loadDataFromCSV("D:\\test\\genetics\\input\\cpi.csv");
-		dataSet = Helper.normalizeData(dataSet);
-		double [][] allTargets = Helper.splitDataset(dataSet, 1,true);
-		double [][] allInputs = Helper.splitDataset(dataSet, 1,false);
-
-		double[][] small = Helper.getSubset(dataSet,100);
-		double [][] targets = Helper.splitDataset(small, 1,true);
-		double [][] inputs = Helper.splitDataset(small, 1,false);
-
-
-		int numberOfInputs = inputs[0].length;
-		int[] neuronCounts = new int[]{2,1};
-		GeneticEngine ge = new GeneticEngine(numberOfInputs,neuronCounts,0.05,1);
-		ge.setSTART_POPULATION_SIZE(1000);
-		ge.setMUTATION_RATE(0.15);
-//		ge.setKillingBehaviour(new FitnessAndAgeBasedChanceOfSurvival(ge));
-//		ge.setKillingBehaviour(new TopSurvives(ge,1));
-		ge.setKillingBehaviour(new PointBasedChanceOfSurvival(ge));
-//		ge.setKillingBehaviour(new FitnessBasedChanceOfSurvival(ge));
-		ge.setReproductionBehaviour(new ReproductionBehaviour(ge));
-		ge.setMutationBehaviourName("rm");
-		ge.setInheritanceBehaviourName("ri");
-		ge.setActivationFunctionShortName("ht");
-
-
-//		ge.initialize();
-		ge.readFromCSV("D:\\test\\genetics\\tmp.csv");
-
-
-		System.out.println(ge.getPopulation().get(0));
-		System.out.println("\n");
-		System.out.println(ge.getPopulation().get(0).weightsToString());
-
-
-		for (int i = 0; i < 20000; i++) {
-
-			if(i % 300 == 0){
-				small = Helper.getSubset(dataSet,110);
-				targets = Helper.splitDataset(small, 1,true);
-				inputs = Helper.splitDataset(small, 1,false);
-			}
-
-			ge.runNextTurn(inputs, targets);
-			System.out.println(i + ".  " + ge.getBestFitness() + "  age: " + ge.getPopulation().get(0).getAge());
-			if(ge.getPopulation().get(0).getAge()>6000){
-				break;
-			}
-		}
-
-		ge.saveInCSV("D:\\test\\genetics\\tmp.csv");
-
-		double[][] voted = ge.votePredict(allInputs, allTargets, 50);
-
-		for (int j = 0; j < voted.length; j++) {
-			System.out.println("" + voted[j][0]);
-		}
-	}
 }

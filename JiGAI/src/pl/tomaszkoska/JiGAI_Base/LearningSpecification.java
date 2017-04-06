@@ -1,6 +1,12 @@
 package pl.tomaszkoska.JiGAI_Base;
 
-public class LearningSpecification {
+import java.io.Serializable;
+
+public class LearningSpecification implements Serializable{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	protected double learningRate;
     protected double learningRateDelta; // if decreasing, how big should the change be?
     protected double minLearningRate; //if decreasing, what is the minimum?

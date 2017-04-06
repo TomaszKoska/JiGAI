@@ -21,7 +21,7 @@ public class JiGAIStarter {
 		LearningTest.runTest();
 //		SaveLoadTester.runTest();
 //		SaveLoadTester.runTest2();
-
+//		DatasetTester.runTest();
 
 
 //		startNewForecasting();
@@ -30,15 +30,15 @@ public class JiGAIStarter {
 
 	public static void startNewForecasting(){
 		ForecastingEngine fe = new ForecastingEngine();
-		fe.loadData("D:\\test\\nn\\pkb_data.csv",12,1);
-		fe.makeNewNets(100, new int[]{5,1}, "th", 0.0000001,0);
+		fe.loadData("D:\\test\\nn\\pkb_data_bin.csv",12,1);
+		fe.makeNewNets(12, new int[]{5,1}, "th", 0.00005,0);
 		fe.makeSubsampleForEachNet();
 		System.out.println("Data basic info:");
 		System.out.println(fe.getFullData().length);
 		System.out.println(fe.getFullData()[0].length);
 		System.out.println("targets: " + fe.targetCount + "  inputs: " + fe.inputCount);
 
-		fe.trainNets(10000000,15);
+		fe.trainNets(1000000,10);
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
 		Date date = new Date();

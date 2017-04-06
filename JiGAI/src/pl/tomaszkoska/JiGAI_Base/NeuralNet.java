@@ -5,6 +5,7 @@ import java.io.Serializable;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 import pl.tomaszkoska.JiGAI_Util.Helper;
 
 
@@ -95,32 +96,32 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public double[] trainOneEpochSupervised(double[][] inputDataSet, double[][] targetDataSet, boolean shuffle){
-    	double[][] in = inputDataSet;
-    	double[][] tar = targetDataSet;
+    public double[] trainOneEpochSupervised(Dataset dataset, boolean shuffle){
 
     	if(shuffle){
-    		double[][] b = Helper.bindDataset(targetDataSet, inputDataSet);
-    		Helper.shuffleArray(b);
-    		tar = Helper.splitDataset(b, targetDataSet[0].length,true);
-    		in = Helper.splitDataset(b, targetDataSet[0].length,false);
+    		dataset.shuffle();
+    	}
+    	double[][] in = dataset.xs;
+    	double[][] tar = dataset.ys;
+    	double[][] w = dataset.weights;
+
+
+    	for (int obs = 0; obs < tar.length; obs++) {	//for each observation
+    		trainOneObsSupervised(in[obs], tar[obs], w[obs]);
     	}
 
-    	for (int obs = 0; obs < targetDataSet.length; obs++) {	//for each observation
-    		trainOneObsSupervised(in[obs], tar[obs]);
-    	}
-    	this.fullPredict(inputDataSet, targetDataSet);
-
+    	this.fullPredict(dataset);
     	return this.getRMSE();
     }
 
 
-    public void trainOneObsSupervised(double[] inputData, double[] targetData){
+    public void trainOneObsSupervised(double[] inputData, double[] targetData, double[] errorWeight){
 
     	this.processInput(inputData);
+
     	for (int i = 0; i < this.getOutputLayer().getNeurons().length; i++) {
     		Neuron neu = this.getOutputLayer().getNeurons()[i];
-    		neu.calculateLastSignalError((targetData[i]-neu.getLastOutput()));
+    		neu.calculateLastSignalError(errorWeight[0]*(targetData[i]-neu.getLastOutput()));
     	}
 
 
@@ -132,7 +133,7 @@ public class NeuralNet implements Serializable{
     				Neuron pneu = this.getLayers()[l+1].getNeurons()[pn];
     				errorSum = errorSum + pneu.getWeights()[n] * pneu.getLastSignalError();
     			}
-    			neu.calculateLastSignalError(errorSum);
+    			neu.calculateLastSignalError(errorWeight[0]*errorSum);
     		}
     	}
 
@@ -219,10 +220,13 @@ public class NeuralNet implements Serializable{
 
 
 
-    public double[][] fullPredict(double[][] inputDataSet, double[][] targetDataSet){
+    public double[][] fullPredict(Dataset dataset){
 
-        predict(inputDataSet);
-        calculatePredictionError(targetDataSet);
+    	double[][] in = dataset.xs;
+    	double[][] tar = dataset.ys;
+
+        predict(in);
+        calculatePredictionError(tar);
 
         return prediction;
     }

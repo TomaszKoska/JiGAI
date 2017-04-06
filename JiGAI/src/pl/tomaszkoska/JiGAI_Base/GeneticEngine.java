@@ -10,6 +10,7 @@ import java.util.Iterator;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
+import pl.tomaszkoska.JiGAI_Dataset.Dataset;
 import pl.tomaszkoska.JiGAI_KillingBehaviours.KillingBehaviour;
 import pl.tomaszkoska.JiGAI_ReproductionBehaviours.ReproductionBehaviour;
 
@@ -56,9 +57,9 @@ public class GeneticEngine {
 		}
 	}
 
-	public void runNextTurn(double[][] inputDataSet,double[][] targetDataSet) {
+	public void runNextTurn(Dataset d) {
 		updateAge();
-		doTasks(inputDataSet,targetDataSet);
+		doTasks(d);
 		calculateFitness();
 		sort();
 		givePoints();
@@ -86,11 +87,11 @@ public class GeneticEngine {
 		}
 	}
 
-	private void doTasks(double[][] inputDataSet,double[][] targetDataSet) {
+	private void doTasks(Dataset d) {
 
 		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
 			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
-			gnn.fullPredict(inputDataSet, targetDataSet);
+			gnn.fullPredict(d);
 		}
 	}
 
@@ -270,14 +271,16 @@ public class GeneticEngine {
         }
 	}
 
-	public double[][] votePredict(double[][] inputs, double[][] targets, int howManyVotes){
-		double [][] votePrediction = new double [targets.length][targets[0].length];
+	public double[][] votePredict(Dataset d, int howManyVotes){
+
+
+		double [][] votePrediction = new double [d.ys.length][d.ys[0].length];
 
 		Collections.sort(population);
 		Collections.sort(population, (o1, o2) -> o2.getPoints() - o1.getPoints());
 		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
 			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
-			gnn.fullPredict(inputs, targets);
+			gnn.fullPredict(d);
 		}
 
 		for (int i = 0; i < votePrediction.length; i++) {
