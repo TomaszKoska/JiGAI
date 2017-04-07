@@ -109,6 +109,7 @@ public class NeuralNet implements Serializable{
     	for (int obs = 0; obs < tar.length; obs++) {	//for each observation
     		trainOneObsSupervised(in[obs], tar[obs], w[obs]);
     	}
+    	this.getLearningSpecifiaction().updateLearningRate();//after each epoch update learning rate
 
     	this.fullPredict(dataset);
     	return this.getRMSE();

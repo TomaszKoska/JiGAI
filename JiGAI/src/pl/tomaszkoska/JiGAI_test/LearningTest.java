@@ -25,6 +25,10 @@ public class LearningTest {
 		NeuralNet nn = new NeuralNet(architecture,d.xs[0].length);
 		nn.setActivationFunction("ht");
 		nn.getLearningSpecifiaction().setLearningRate(0.0001);
+		nn.getLearningSpecifiaction().setLearningRateDelta(0.0000);
+		nn.getLearningSpecifiaction().setMinLearningRate(0.000);
+
+
 		nn.randomizeLayers();
 
 //		System.out.println(nn.weightsToString());
