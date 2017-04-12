@@ -97,9 +97,12 @@ public class Neuron implements Serializable{
 		bias = Math.random()*(max-min)+min;
 	}
 
-	public double processInput(double[] inputValues){
-		lastOutput = activationFunctionBehaviour.compute((summingFunction(inputValues)));
-		return lastOutput;
+	public double processInput(double[] inputValues, boolean learningMode){
+		double tmp = activationFunctionBehaviour.compute((summingFunction(inputValues)));
+		if(learningMode){
+			lastOutput = activationFunctionBehaviour.compute((summingFunction(inputValues)));
+		}
+		return tmp;
 	}
 
 	public void updateWeights(double biasInfo, double[] updatingInfo){

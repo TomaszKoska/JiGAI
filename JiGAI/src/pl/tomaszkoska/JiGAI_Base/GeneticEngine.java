@@ -91,7 +91,7 @@ public class GeneticEngine {
 
 		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
 			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
-			gnn.fullPredict(d);
+			gnn.fullPredict(d,false);
 		}
 	}
 
@@ -280,7 +280,7 @@ public class GeneticEngine {
 		Collections.sort(population, (o1, o2) -> o2.getPoints() - o1.getPoints());
 		for (Iterator<GeneticNeuralNet> iterator = population.iterator(); iterator.hasNext();) {
 			GeneticNeuralNet gnn = (GeneticNeuralNet) iterator.next();
-			gnn.fullPredict(d);
+			gnn.fullPredict(d,false);
 		}
 
 		for (int i = 0; i < votePrediction.length; i++) {

@@ -58,11 +58,11 @@ public class NeuralNetLayer implements Serializable{
 
 
 
-	public double[] processInput(double[] inputValues){
+	public double[] processInput(double[] inputValues, boolean learningMode){
 		double[] outcome = new double[this.getNeuronCount()];
 
 		for (int i = 0; i < outcome.length; i++) {
-				outcome[i] = neurons[i].processInput(inputValues);
+				outcome[i] = neurons[i].processInput(inputValues, learningMode);
 		}
 
 		return outcome;

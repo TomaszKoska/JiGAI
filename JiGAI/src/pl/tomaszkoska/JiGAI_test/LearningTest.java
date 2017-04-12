@@ -32,8 +32,8 @@ public class LearningTest {
 		nn.randomizeLayers();
 
 //		System.out.println(nn.weightsToString());
-		nn.fullPredict(d);
-		System.out.println(nn.getRMSE()[0] + " , " + nn.getRMSE()[1] + "\n");
+		nn.fullPredict(d,false);
+		System.out.println(nn.getRMSE(false)[0] + " , " + nn.getRMSE(false)[1] + "\n");
 
 		for (int j = 0; j < nn.getPrediction().length; j++) {
 			System.out.println("" + nn.getPrediction()[j][0]
@@ -53,8 +53,8 @@ public class LearningTest {
 		System.out.println(nn.weightsToString());
 
 //		System.out.println(nn.weightsToString());
-		nn.fullPredict(d);
-		System.out.println(nn.getRMSE()[0] + " , " + nn.getRMSE()[1]+ "\n");
+		nn.fullPredict(d,false);
+		System.out.println(nn.getRMSE(false)[0] + " , " + nn.getRMSE(false)[1]+ "\n");
 
 
 		for (int j = 0; j < nn.getPrediction().length; j++) {
@@ -74,8 +74,8 @@ public class LearningTest {
 
 
 //		System.out.println(nn.weightsToString());
-		nn.fullPredict(d);
-		System.out.println(nn.getRMSE()[0] + " , " + nn.getRMSE()[1] + "\n");
+		nn.fullPredict(d,false);
+		System.out.println(nn.getRMSE(false)[0] + " , " + nn.getRMSE(false)[1] + "\n");
 
 		for (int j = 0; j < nn.getPrediction().length; j++) {
 			System.out.println("" + nn.getPrediction()[j][0]
@@ -90,8 +90,8 @@ public class LearningTest {
 		}
 
 //		System.out.println(nn.weightsToString());
-		nn.fullPredict(d);
-		System.out.println(nn.getRMSE()[0] + " , " + nn.getRMSE()[1]+ "\n");
+		nn.fullPredict(d,false);
+		System.out.println(nn.getRMSE(false)[0] + " , " + nn.getRMSE(false)[1]+ "\n");
 
 
 		for (int j = 0; j < nn.getPrediction().length; j++) {

@@ -23,6 +23,10 @@ public class NeuralNet implements Serializable{
 
     protected double[][] prediction; //last calculated prediction
     protected double[][] error; // last calculated error
+
+    protected double[][] predictionOnValidation; //last calculated prediction
+    protected double[][] errorOnValidation; // last calculated error
+
     protected String activationFunctionShortName;
 
 
@@ -85,12 +89,12 @@ public class NeuralNet implements Serializable{
     }
 
 
-    public double[] processInput(double[] inputValues){
+    public double[] processInput(double[] inputValues, boolean learningMode){
         //calculates one row of input
         double[] input = inputValues;
 
         for (int i = 0; i < layers.length; i++) {
-            input = layers[i].processInput(input);
+            input = layers[i].processInput(input, learningMode);
         }
         return input;
     }
@@ -111,14 +115,38 @@ public class NeuralNet implements Serializable{
     	}
     	this.getLearningSpecifiaction().updateLearningRate();//after each epoch update learning rate
 
-    	this.fullPredict(dataset);
-    	return this.getRMSE();
+    	this.fullPredict(dataset, true);
+
+    	return this.getRMSE(true);
     }
+
+    public double[] trainOneEpochSupervisedWithValidation(Dataset dataset,Dataset validationSet, boolean shuffle){
+
+    	if(shuffle){
+    		dataset.shuffle();
+    	}
+    	double[][] in = dataset.xs;
+    	double[][] tar = dataset.ys;
+    	double[][] w = dataset.weights;
+
+
+    	for (int obs = 0; obs < tar.length; obs++) {	//for each observation
+    		trainOneObsSupervised(in[obs], tar[obs], w[obs]);
+    	}
+    	this.getLearningSpecifiaction().updateLearningRate();//after each epoch update learning rate
+
+    	this.fullPredict(dataset, true);
+    	this.fullPredict(validationSet, false);
+
+    	return this.getRMSE(false);
+    }
+
+
 
 
     public void trainOneObsSupervised(double[] inputData, double[] targetData, double[] errorWeight){
 
-    	this.processInput(inputData);
+    	this.processInput(inputData, true);
 
     	for (int i = 0; i < this.getOutputLayer().getNeurons().length; i++) {
     		Neuron neu = this.getOutputLayer().getNeurons()[i];
@@ -197,7 +225,7 @@ public class NeuralNet implements Serializable{
 
 
 
-    public double[][] predict(double[][] inputDataSet){
+    public double[][] predict(double[][] inputDataSet, boolean learningMode){
 
         if(inputDataSet[0].length != this.getInputVariableCount()){
             System.out.println("Number of input variables doesn't match what the net expects");
@@ -212,35 +240,51 @@ public class NeuralNet implements Serializable{
                 dataRow[j] = inputDataSet[i][j];
             }
             for (int j = 0; j < this.getOutputNeuronsCount(); j++) {
-                outcome[i] = processInput(dataRow);
+                outcome[i] = processInput(dataRow, learningMode);
             }
         }
+
+        if(learningMode){
         prediction = outcome;
+        }else{
+        predictionOnValidation = outcome;
+        }
+
         return outcome;
     }
 
 
 
-    public double[][] fullPredict(Dataset dataset){
+    public double[][] fullPredict(Dataset dataset, boolean learningMode){
 
     	double[][] in = dataset.xs;
     	double[][] tar = dataset.ys;
 
-        predict(in);
-        calculatePredictionError(tar);
+        predict(in, learningMode);
+        calculatePredictionError(tar,learningMode);
 
         return prediction;
     }
 
-    public double[][] calculatePredictionError(double[][] targetDataSet){
+    public double[][] calculatePredictionError(double[][] targetDataSet, boolean learningMode){
         double[][] outcome = new double[targetDataSet.length][targetDataSet[0].length];
 
         for (int i = 0; i < outcome.length; i++) {
             for (int j = 0; j < outcome[0].length; j++) {
-                outcome[i][j] = targetDataSet[i][j]-prediction[i][j];
+            	if(learningMode){
+            		outcome[i][j] = targetDataSet[i][j]-prediction[i][j];
+            	}else{
+            		outcome[i][j] = targetDataSet[i][j]-predictionOnValidation[i][j];
+            	}
             }
         }
-        error = outcome;
+        if (learningMode){
+        	error = outcome;
+        }else{
+        	System.out.println("error on validation runs!");
+        	errorOnValidation = outcome;
+        }
+
         return outcome;
     }
 
@@ -311,19 +355,34 @@ public class NeuralNet implements Serializable{
         return error;
     }
 
-    public double[][] getSquaredError() {
-        double[][] outcome = new double[error.length][error[0].length];
-        for (int i = 0; i < error.length; i++) {
-            for (int j = 0; j < error[0].length; j++) {
-                outcome[i][j] = error[i][j]*error[i][j];
-            }
-        }
-        return outcome;
+    public double[][] getSquaredError(boolean learningMode) {
+    	double[][] outcome;
+    	if(learningMode){
+    		outcome = new double[error.length][error[0].length];
+    		for (int i = 0; i < error.length; i++) {
+    			for (int j = 0; j < error[0].length; j++) {
+    				outcome[i][j] = error[i][j]*error[i][j];
+    			}
+    		}
+    	}else{
+    		outcome = new double[errorOnValidation.length][errorOnValidation[0].length];
+    		for (int i = 0; i < errorOnValidation.length; i++) {
+    			for (int j = 0; j < errorOnValidation[0].length; j++) {
+    				outcome[i][j] = errorOnValidation[i][j]*errorOnValidation[i][j];
+    			}
+    		}
+    	}
+
+    	return outcome;
     }
 
-    public double[] getRMSE(){
-        double[] outcome = new double[error[0].length];
-        double[][] sqe = getSquaredError();
+    public double[] getRMSE(boolean learningMode){
+
+    	double[] outcome;
+    	double[][] sqe = getSquaredError(learningMode);
+
+    	if(learningMode){
+	        outcome = new double[error[0].length];
 
         for (int j = 0; j < outcome.length; j++) {
             outcome[j] = 0;
@@ -332,6 +391,17 @@ public class NeuralNet implements Serializable{
             }
             outcome[j] = Math.sqrt(outcome[j]/sqe.length);
         }
+	    }else{
+	        outcome = new double[errorOnValidation[0].length];
+	        for (int j = 0; j < outcome.length; j++) {
+	            outcome[j] = 0;
+	            for (int i = 0; i < errorOnValidation.length; i++) {
+	                    outcome[j] += sqe[i][j];
+	            }
+	            outcome[j] = Math.sqrt(outcome[j]/sqe.length);
+	        }
+	    }
+
         return outcome;
     }
 

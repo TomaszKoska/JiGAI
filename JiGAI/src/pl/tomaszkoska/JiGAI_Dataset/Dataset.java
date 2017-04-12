@@ -1,9 +1,12 @@
 package pl.tomaszkoska.JiGAI_Dataset;
 
+import java.io.Serializable;
+
 import pl.tomaszkoska.JiGAI_Util.Helper;
 
-public class Dataset {
+public class Dataset implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	public double[][] xs;
 	public double[][] ys;
 	public double[][] weights;
@@ -81,12 +84,12 @@ public class Dataset {
 		ys = Helper.splitDataset(tmp, weights[0].length, false);
 	}
 
-	public Dataset getSubset(int rows, boolean repetition){
+	public Dataset getRandomSubset(int rows, boolean repetition){
 		double [][] binded;// = new double[xs.length][xs[0].length+ys[0].length+weights.length];
 		binded = Helper.bindDataset(weights, ys);
 		binded = Helper.bindDataset(binded,xs);
 
-		double[][] chosen = Helper.getSubset(binded, rows, repetition);
+		double[][] chosen = Helper.getRandomSubset(binded, rows, repetition);
 
 		double [][] tmp = Helper.splitDataset(chosen, weights[0].length + ys[0].length, true);
 		double [][] newXs = Helper.splitDataset(chosen, weights[0].length + ys[0].length, false);
@@ -95,6 +98,22 @@ public class Dataset {
 
 		return new Dataset(newYs,newXs,newWeights);
 	}
+
+	public Dataset getSubset(int startRow, int lastRow){
+		double [][] binded;// = new double[xs.length][xs[0].length+ys[0].length+weights.length];
+		binded = Helper.bindDataset(weights, ys);
+		binded = Helper.bindDataset(binded,xs);
+		System.out.println("dataset subset: " + startRow + "   " + lastRow);
+		double[][] chosen = Helper.getSubset(binded, startRow, lastRow);
+
+		double [][] tmp = Helper.splitDataset(chosen, weights[0].length + ys[0].length, true);
+		double [][] newXs = Helper.splitDataset(chosen, weights[0].length + ys[0].length, false);
+		double [][] newWeights = Helper.splitDataset(tmp, weights[0].length, true);
+		double [][] newYs = Helper.splitDataset(tmp, weights[0].length, false);
+
+		return new Dataset(newYs,newXs,newWeights);
+	}
+
 
 	public void changeWeightsBasedOnPrediction(){
 		//TODO: implement this

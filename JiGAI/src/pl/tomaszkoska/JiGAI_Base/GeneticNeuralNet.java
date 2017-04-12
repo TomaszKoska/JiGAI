@@ -160,7 +160,7 @@ public class GeneticNeuralNet
 	};
 
 	public double calculateFitness(){
-		double[] rmses = this.getRMSE();
+		double[] rmses = this.getRMSE(false);
 		double fit = 0;
 
 		for (int i = 0; i < rmses.length; i++) {
@@ -174,9 +174,9 @@ public class GeneticNeuralNet
 
 	public double calculateFitness(Dataset d){
 
-		this.fullPredict(d);
+		this.fullPredict(d,false);
 
-		double[] rmses = this.getRMSE();
+		double[] rmses = this.getRMSE(false);
 		double fit = 0;
 
 		for (int i = 0; i < rmses.length; i++) {

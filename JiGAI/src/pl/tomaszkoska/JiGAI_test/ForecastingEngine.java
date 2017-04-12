@@ -24,22 +24,31 @@ import pl.tomaszkoska.JiGAI_Util.Helper;
 public class ForecastingEngine {
 
 	ArrayList<NeuralNet> nets;
-	ArrayList<double[][]> subsamples;
+	ArrayList<Dataset> subsamples;
 
-	double[][] fullData;
+	Dataset trainingData;
+	Dataset testingData;
 	int targetCount;
 	int inputCount;
 
 	public ForecastingEngine(){
 		nets = new ArrayList<NeuralNet>();
-		subsamples = new ArrayList<double[][]>();
+		subsamples = new ArrayList<Dataset>();
 	}
 
 
-	public void loadData(String csvPath, int inputCount, int targetCount){
+	public void loadData(String csvPath, int inputCount, int targetCount, int trainingRows){
 
-		fullData = Helper.loadDataFromCSV(csvPath);
-		fullData = Helper.normalizeData(fullData);
+		double[][] f = Helper.loadDataFromCSV(csvPath);
+		//f = Helper.normalizeData(f);
+		Dataset d = new Dataset(f, targetCount);
+//		System.out.println("train rows: " + trainingRows);
+//		System.out.println("od 0 do " + (trainingRows-1));
+//		System.out.println("od "+ trainingRows + " do " + d.xs.length);
+
+		this.trainingData =  d.getSubset(0,trainingRows-1);
+		this.testingData =  d.getSubset(trainingRows, d.xs.length);
+
 		this.inputCount = inputCount;
 		this.targetCount = targetCount;
 	}
@@ -61,14 +70,13 @@ public class ForecastingEngine {
 			nets.add(nn);
 //			System.out.println(nn.weightsToString());
 		}
-
 	}
 
 
 	public void makeSubsampleForEachNet(){
 
 		for (int n = 0; n < nets.size(); n++) {
-			double [][] subsample = Helper.getSubset(fullData, fullData.length, true);
+			Dataset subsample = trainingData.getRandomSubset(trainingData.xs.length, true);
 			subsamples.add(subsample);
 		}
 
@@ -82,10 +90,8 @@ public class ForecastingEngine {
 		for (int n = 0; n < nets.size(); n++) {
 
 			NeuralNet nn = nets.get(n);
-			double[][] s = subsamples.get(n);
-			double [][] in = Helper.splitDataset(s, targetCount, false);
-			double [][] tar = Helper.splitDataset(s, targetCount, true);
-			Dataset d = new Dataset(tar,in);
+			Dataset thisSet = subsamples.get(n);
+			Dataset d = new Dataset(thisSet.ys,thisSet.xs);
 
 			int howManyTurning = 0;
 			lastRMSE = 999;
@@ -93,22 +99,29 @@ public class ForecastingEngine {
 			for(int i=0;i<iterations;i++){
 //				Helper.printDataSet(tar);
 //				Helper.printDataSet(in);
-				double[] x = nn.trainOneEpochSupervised(d,true);
+				double[] x = nn.trainOneEpochSupervisedWithValidation(trainingData,testingData,true);
+//				nn.fullPredict(testingData, false);
+				double[] x2 = nn.getRMSE(false);
 				thisRMSE = 0;
+				double lastRMSEValidation = 999;
+				double thisRMSEValidation = 0;
 				for (int j = 0; j < x.length; j++) {
 					thisRMSE += x[j];
+					thisRMSEValidation+= x2[j];
 				}
 				thisRMSE = thisRMSE/x.length;
+				thisRMSEValidation = thisRMSEValidation/x2.length;
 
-				if (thisRMSE > lastRMSE){
+				if (thisRMSEValidation > lastRMSEValidation){
 					howManyTurning++;
 				}else{
 					howManyTurning--;
 					if(howManyTurning<0){howManyTurning=0;}
 				}
 				lastRMSE = thisRMSE;
-				System.out.println("net: " + n + ", rmses in training: " + x[0]);
-
+				lastRMSEValidation = thisRMSEValidation;
+				System.out.println("net: " + n + ", rmses in training: " + nn.getRMSE(true)[0]);
+				System.out.println("net: " + n + ", rmses in testing: " + nn.getRMSE(false)[0]);
 				if(howManyTurning > maxTurning ){
 					System.out.println("Things turn!");
 					break;
@@ -162,7 +175,7 @@ public class ForecastingEngine {
 				ObjectInput input2 = new ObjectInputStream (buffer2);
 				){
 			nets = (ArrayList<NeuralNet>)input.readObject();
-			subsamples = (ArrayList<double[][]>)input2.readObject();
+			subsamples = (ArrayList<Dataset>)input2.readObject();
 			input.close();
 			file.close();
 			input2.close();
@@ -188,25 +201,6 @@ public class ForecastingEngine {
 		this.nets = nets;
 	}
 
-
-	public ArrayList<double[][]> getSubsamples() {
-		return subsamples;
-	}
-
-
-	public void setSubsamples(ArrayList<double[][]> subsamples) {
-		this.subsamples = subsamples;
-	}
-
-
-	public double[][] getFullData() {
-		return fullData;
-	}
-
-
-	public void setFullData(double[][] fullData) {
-		this.fullData = fullData;
-	}
 
 
 	public int getTargetCount() {
@@ -239,7 +233,7 @@ public class ForecastingEngine {
 
 		for (Iterator<NeuralNet> iterator = nets.iterator(); iterator.hasNext();) {
 			NeuralNet nn = (NeuralNet) iterator.next();
-			nn.predict(in);
+			nn.predict(in,false);
 
 			for (int i = 0; i < avg.length; i++) {
 				for (int j = 0; j < avg[0].length; j++) {
@@ -273,6 +267,40 @@ public class ForecastingEngine {
 				Helper.saveAsCSV(forecastSet, ( directoryWithSlash + fileName + ".csv"));
 			}
 	}
+
+
+	public ArrayList<Dataset> getSubsamples() {
+		return subsamples;
+	}
+
+
+	public void setSubsamples(ArrayList<Dataset> subsamples) {
+		this.subsamples = subsamples;
+	}
+
+
+	public Dataset getTrainingData() {
+		return trainingData;
+	}
+
+
+	public void setTrainingData(Dataset trainingData) {
+		this.trainingData = trainingData;
+	}
+
+
+	public Dataset getTestingData() {
+		return testingData;
+	}
+
+
+	public void setTestingData(Dataset testingData) {
+		this.testingData = testingData;
+	}
+
+
+
+
 
 
 }

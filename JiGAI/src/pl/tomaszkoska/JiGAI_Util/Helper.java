@@ -72,7 +72,24 @@ public class Helper {
 	}
 
 
-	public static double[][] getSubset(double[][] source, int rows, boolean repetition){
+	public static double[][] getSubset(double[][] source, int startRow, int lastRow){
+		double[][] subset = new double[lastRow-startRow+1][source[0].length];
+
+		System.out.println("Helper getSubset: " + subset.length + "   " + subset[0].length);
+
+		int k = 0;
+		for (int i = startRow; i < lastRow; i++) {
+			for (int j = 0; j < subset[0].length; j++) {
+				subset[k][j] = source[i][j];
+			}
+			k++;
+		}
+
+		return subset;
+	}
+
+
+	public static double[][] getRandomSubset(double[][] source, int rows, boolean repetition){
 
 		double[][] subset = new double[rows][source[0].length];
 

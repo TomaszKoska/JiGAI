@@ -343,7 +343,7 @@ public class GeneticEngineTester {
 		gnn.getLayers()[1].getNeurons()[0].setWeights(new double[]{1,1});
 
 		Dataset d = new Dataset(inputDataSet, targetDataSet);
-		gnn.fullPredict(d);
+		gnn.fullPredict(d,false);
 //
 		System.out.println(gnn);
 		System.out.println(gnn.weightsToString());
@@ -352,7 +352,7 @@ public class GeneticEngineTester {
 		for (int j = 0; j < gnn.getPrediction().length; j++) {
 			System.out.println("" + gnn.getError()[j][0]);
 		}
-		System.out.println(gnn.getRMSE()[0]);
+		System.out.println(gnn.getRMSE(false)[0]);
 	}
 
 

@@ -37,7 +37,7 @@ public class NeuralNetTester {
 			      { -1 }
 				};
 			Dataset d = new Dataset(targetSet,dataSet);
-			nn.fullPredict(d);
+			nn.fullPredict(d,false);
 
 
 		System.out.println(nn.weightsToString());
@@ -56,7 +56,7 @@ public class NeuralNetTester {
 			System.out.println(line);
 		}
 		System.out.println("");
-		double[][] sqe = nn.getSquaredError();
+		double[][] sqe = nn.getSquaredError(false);
 		for (int i = 0; i < sqe.length; i++) {
 			String line = "";
 			for (int j = 0; j < sqe[0].length; j++) {
@@ -64,7 +64,7 @@ public class NeuralNetTester {
 			}
 			System.out.println(line);
 		}
-		double[] rmse = nn.getRMSE();
+		double[] rmse = nn.getRMSE(false);
 		for (int i = 0; i < rmse.length; i++) {
 			System.out.println("RMSE:" + rmse[i]);
 		}

@@ -35,12 +35,12 @@ public class DatasetTester {
 			d2.printWeights();
 			d2.normalizeAll();
 
-			Dataset d3 = d2.getSubset(20, true);
+			Dataset d3 = d2.getRandomSubset(20, true);
 			d3.printXs();
 			d3.printYs();
 			d3.printWeights();
 
-			d3 = d2.getSubset(4, false);
+			d3 = d2.getRandomSubset(4, false);
 			d3.printXs();
 			d3.printYs();
 			d3.printWeights();

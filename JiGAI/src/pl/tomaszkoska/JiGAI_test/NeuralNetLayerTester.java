@@ -42,16 +42,16 @@ public class NeuralNetLayerTester {
 		System.out.println(layer3.getNeuronCount());
 
 
-		System.out.println("layer 1 output: " + layer.processInput(new double[]{1,1})[0]);
-		System.out.println("layer 1 output: " + layer.processInput(new double[]{1,1})[1]);
+		System.out.println("layer 1 output: " + layer.processInput(new double[]{1,1},false)[0]);
+		System.out.println("layer 1 output: " + layer.processInput(new double[]{1,1},false)[1]);
 
-		System.out.println("layer 2 output: " + layer2.processInput(layer.processInput(new double[]{1,1}))[0]);
-		System.out.println("layer 2 output: " + layer2.processInput(layer.processInput(new double[]{1,1}))[1]);
+		System.out.println("layer 2 output: " + layer2.processInput(layer.processInput(new double[]{1,1},false),false)[0]);
+		System.out.println("layer 2 output: " + layer2.processInput(layer.processInput(new double[]{1,1},false),false)[1]);
 
 
 		double[] outcome = layer3.processInput(
 				layer2.processInput(
-						layer.processInput(new double[]{1,1})));
+						layer.processInput(new double[]{1,1},false),false),false);
 		System.out.println(outcome[0]);
 
 	}
