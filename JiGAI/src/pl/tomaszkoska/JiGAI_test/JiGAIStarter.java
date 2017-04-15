@@ -18,13 +18,13 @@ public class JiGAIStarter {
 //		GeneticEngineTester.runTest3();
 //		GeneticEngineTester.runTest4();
 //		HelperTester.runTest();
-//		LearningTest.runTest();
+		LearningTest.runTest();
 //		SaveLoadTester.runTest();
 //		SaveLoadTester.runTest2();
 //		DatasetTester.runTest();
+//		WeightsTester.runTest();
 
-
-		startNewForecasting();
+//		startNewForecasting();
 //		loadNetsAndForecast();
 	}
 
@@ -33,7 +33,8 @@ public class JiGAIStarter {
 		fe.loadData("C:\\Users\\Tomek\\Desktop\\kaggle\\tit2.csv",24,2,500);
 
 		fe.getTrainingData().printXs();
-		fe.makeNewNets(1, new int[]{10,2}, "s", 0.001,0);
+		fe.makeNewNets(1, new int[]{2}, "s", 0.000001,0);
+
 		fe.makeSubsampleForEachNet();
 		System.out.println("Data basic info:");
 		System.out.println(fe.getTrainingData().xs.length);

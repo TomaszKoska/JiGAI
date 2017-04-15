@@ -5,6 +5,7 @@ import java.io.Serializable;
 import pl.tomaszkoska.JiGAI_Activation.ActivationFunctionBehaviour;
 import pl.tomaszkoska.JiGAI_Activation.HyperbolicTangentActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.LinearActivationFunction;
+import pl.tomaszkoska.JiGAI_Activation.PReLUActivationFunction;
 import pl.tomaszkoska.JiGAI_Activation.SigmoidActivationFunction;
 import pl.tomaszkoska.JiGAI_Exceptions.MyException;
 
@@ -160,6 +161,8 @@ public class Neuron implements Serializable{
 			this.setActivationFunctionBehaviour(new SigmoidActivationFunction());
 		} else if(name.toLowerCase().equals("ht")){
 			this.setActivationFunctionBehaviour(new HyperbolicTangentActivationFunction());
+		}else if(name.toLowerCase().equals("p")){
+			this.setActivationFunctionBehaviour(new PReLUActivationFunction());
 		} else{
 			this.setActivationFunctionBehaviour(new LinearActivationFunction());
 		}

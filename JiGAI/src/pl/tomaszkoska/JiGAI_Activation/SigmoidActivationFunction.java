@@ -3,6 +3,11 @@ package pl.tomaszkoska.JiGAI_Activation;
 public class SigmoidActivationFunction extends ActivationFunctionBehaviour {
 
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public SigmoidActivationFunction() {
 		super();
 		this.name = "Sigmoid";

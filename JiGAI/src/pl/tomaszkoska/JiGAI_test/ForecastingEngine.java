@@ -120,8 +120,8 @@ public class ForecastingEngine {
 				}
 				lastRMSE = thisRMSE;
 				lastRMSEValidation = thisRMSEValidation;
-				System.out.println("net: " + n + ", rmses in training: " + nn.getRMSE(true)[0]);
-				System.out.println("net: " + n + ", rmses in testing: " + nn.getRMSE(false)[0]);
+				System.out.println("net: " + n + ", rmses in training: " + thisRMSE);
+				System.out.println("net: " + n + ", rmses in testing: " + thisRMSEValidation);
 				if(howManyTurning > maxTurning ){
 					System.out.println("Things turn!");
 					break;
